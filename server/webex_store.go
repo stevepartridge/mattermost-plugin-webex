@@ -24,9 +24,9 @@ func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
 
 	config := p.getConfiguration()
 
-	accessToken, err := encrypt([]byte(config.EncryptionKey), session.Token.AccessToken)
-	if err != nil {
-		return err
+	accessToken, encryptErr := encrypt([]byte(config.EncryptionKey), session.Token.AccessToken)
+	if encryptErr != nil {
+		return encryptErr
 	}
 
 	session.Token.AccessToken = accessToken
@@ -126,10 +126,10 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 
 	p.API.LogDebug("getWebexUserInfo", "userID", userID)
 
-	webexUser, err := p.loadWebexUser(userID)
+	webexUser, loadErr := p.loadWebexUser(userID)
 
 	switch {
-	case err == ErrWebexUserNotFound:
+	case loadErr == ErrWebexUserNotFound:
 
 		session, err := p.loadWebexSession(userID)
 		if err != nil {
@@ -165,8 +165,8 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 			return webexUser, err
 		}
 
-	case (err != nil):
-		return webexUser, err
+	case (loadErr != nil):
+		return webexUser, loadErr
 	}
 
 	return webexUser, nil

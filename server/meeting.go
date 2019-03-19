@@ -1,0 +1,138 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+)
+
+func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
+
+	sessionUserID := r.Header.Get("Mattermost-User-Id")
+	if sessionUserID == "" {
+		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
+		return
+	}
+
+	// Ensure the current user is connected to webex
+	session, err := p.loadWebexSession(sessionUserID)
+	switch {
+	case
+		err == ErrWebexUserNotFound,
+		err == ErrWebexSessionNotFound:
+
+		// Set up a redirect so we can bring them back to the proper location
+		siteUrl := p.API.GetConfig().ServiceSettings.SiteURL
+		redirectURL := fmt.Sprintf("%s%s", *siteUrl, r.RequestURI)
+		oauthConnectURL := fmt.Sprintf(
+			"%s/plugins/%s/oauth2/connect?redirect_to=%s",
+			*siteUrl,
+			manifest.Id,
+			url.QueryEscape(redirectURL),
+		)
+
+		p.API.LogDebug("redirect url", "url", redirectURL)
+		http.Redirect(w, r, oauthConnectURL, http.StatusTemporaryRedirect)
+		return
+	case err != nil:
+		http.Error(w, "Not authorized", http.StatusUnauthorized)
+		return
+	}
+
+	meetingID := strings.Replace(r.URL.Path, "/meetings/", "", 1)
+	p.API.LogDebug("Load meeting", "meeting_id", meetingID)
+
+	meeting, err := p.loadWebexMeeting(meetingID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var (
+		meetingWithName           string
+		destinationDataAttributes string
+
+		isGuest = false
+	)
+
+	// If the 'ToUserID' is the session user and there's a guest email
+	// that means this user is being called as a guest (with their MM email)
+	if meeting.ToUserID == sessionUserID && meeting.GuestEmail != "" {
+		isGuest = true
+	}
+
+	// If current user is a guest and we have the email
+	if meeting.GuestEmail != "" && !isGuest {
+
+		meetingWithName = meeting.GuestEmail
+
+		destinationDataAttributes = `
+    data-to-person-email="` + meeting.GuestEmail + `" 
+  `
+	}
+
+	// If we're not meeting with a guest let's get their info
+	if meetingWithName == "" {
+
+		withWebexUser := meeting.ToWebexUser
+		meetingWithUserID := meeting.ToUserID
+
+		// If we're the current user switch up the to/from
+		if sessionUserID == meeting.ToUserID {
+
+			withWebexUser = meeting.FromWebexUser
+			meetingWithUserID = meeting.FromUserID
+
+		}
+
+		withUser, err := p.API.GetUser(meetingWithUserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		p.API.LogDebug("Found meeting", "meeting_id", meeting.ID, "channel_id", meeting.ChannelID)
+
+		meetingWithName = withUser.GetFullName()
+		if strings.TrimSpace(meetingWithName) == "" {
+			meetingWithName = withWebexUser.DisplayName
+		}
+
+		destinationDataAttributes = `
+    data-destination-id="` + withWebexUser.ID + `"
+    data-destination-type="userId"
+    `
+
+	}
+
+	//
+	// TODO: move this to a template and use an embedded copy of js/css resources
+	//       OR move to a component using the cisco spark react components
+	//
+	html := `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf8">
+
+  <title>Webex Meeting with ` + meetingWithName + `</title>
+  <link rel="stylesheet" href="https://code.s4d.io/widget-space/production/main.css">
+</head>
+<body>
+
+  <div style="width: 100%; height: 100%;"
+    id="space"        
+    data-toggle="ciscospark-space"
+    data-initial-activity="meet"
+    data-access-token="` + session.Token.AccessToken + `"
+    ` + destinationDataAttributes + `
+    />
+  
+  <script src="https://code.s4d.io/widget-space/production/bundle.js"></script>
+</body>
+</html>`
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(html))
+
+}

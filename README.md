@@ -9,20 +9,20 @@ You will need an existing admin account for Webex Teams in order to create an in
 
 Connecting Mattermost users to thier Webex accounts requires [creating an integration](https://developer.webex.com/my-apps/new/integration).  
 
-// image
+![alt text](docs/assets/new-integration.png "New Integration")
 
 Fill out the appropriate fields with the relevant info, but be sure that the Redirect URI(s) includes your Site URL and full URI for the OAuth2 callback:
 
 _https://your-mattermost-site-url/plugins/webex/oauth2/callback_
 
-// image 
+![alt text](docs/assets/redirect-uri-scopes.png "Redirect URI and Scope")
 
 Additionally for scopes select ```spark:all``` and scroll on down to submit _Add Integration_
 
 
 ## Installation
 
-Go to the [releases page of this Github repository](https://github.com/mattermost/mattermost-plugin-zoom/releases) and download the latest release for your server architecture. You can upload this file in the Mattermost system console to install the plugin.
+Go to the [releases page of this Github repository](https://github.com/mattermost/mattermost-plugin-webex/releases) and download the latest release for your server architecture. You can upload this file in the Mattermost system console to install the plugin.
 
 ## Developing
 

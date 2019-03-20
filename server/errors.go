@@ -3,8 +3,11 @@ package main
 import "errors"
 
 var (
-	ErrNotAuthorized    = errors.New("Not authorized")
-	ErrMethodNotAllowed = errors.New("Method not allowed")
+	ErrNotAuthorized            = errors.New("Not authorized")
+	ErrMethodNotAllowed         = errors.New("Method not allowed")
+	ErrAuthroizationCodeMissing = errors.New("Authorization code is missing")
+	ErrOAuthInvalidState        = errors.New("Invalid state")
+	ErrOAuthRetrievingState     = errors.New("Error retrieving stored state")
 
 	ErrWebexSessionNotFound = errors.New("Webex session not found")
 	ErrWebexSessionExpired  = errors.New("Webex session has expired")

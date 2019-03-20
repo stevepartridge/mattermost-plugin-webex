@@ -7,6 +7,18 @@ import (
 	"strings"
 )
 
+// WebexMeeting
+type WebexMeeting struct {
+	ID            string        `json:"id"`
+	FromUserID    string        `json:"from_user_id"`
+	FromWebexUser WebexUserInfo `json:"from_webex_user"`
+	ChannelID     string        `json:"channel_id"`
+	ToUserID      string        `json:"to_user_id"`
+	ToWebexUser   WebexUserInfo `json:"to_webex_user"`
+	GuestEmail    string        `json:"guest_email"`
+	URL           string        `json:"meeting_url"`
+}
+
 func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 
 	sessionUserID := r.Header.Get("Mattermost-User-Id")

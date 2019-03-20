@@ -44,18 +44,6 @@ type WebexOAuthSession struct {
 	Token  oauth2.Token `json:"token"`
 }
 
-// WebexMeeting
-type WebexMeeting struct {
-	ID            string        `json:"id"`
-	FromUserID    string        `json:"from_user_id"`
-	FromWebexUser WebexUserInfo `json:"from_webex_user"`
-	ChannelID     string        `json:"channel_id"`
-	ToUserID      string        `json:"to_user_id"`
-	ToWebexUser   WebexUserInfo `json:"to_webex_user"`
-	GuestEmail    string        `json:"guest_email"`
-	URL           string        `json:"meeting_url"`
-}
-
 // NewWebexClient is a helper to create a new webex sdk client
 // references:
 //   https://github.com/jbogarin/go-cisco-webex-teams

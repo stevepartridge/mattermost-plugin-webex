@@ -72,8 +72,6 @@ func (p *Plugin) handleOAuthConnect(w http.ResponseWriter, r *http.Request) {
 // identity provider (webex cloud) and they've sent the user back to us
 func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 
-	p.API.LogDebug("handle oauth callback", "method", r.Method)
-
 	if strings.ToUpper(r.Method) != "GET" {
 		http.Error(w, ErrMethodNotAllowed.Error(), http.StatusMethodNotAllowed)
 		return
@@ -87,24 +85,23 @@ func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 	code = r.URL.Query().Get("code")
 	if strings.TrimSpace(code) == "" {
-		p.API.LogError("Authorization code is missing")
-		http.Error(w, "missing authorization code", http.StatusBadRequest)
+		p.API.LogError(ErrAuthroizationCodeMissing.Error())
+		http.Error(w, ErrAuthroizationCodeMissing.Error(), http.StatusBadRequest)
 		return
 	}
 
 	state = r.URL.Query().Get("state")
-	p.API.LogDebug("state", "state", state)
 
 	storedState, kverr := p.API.KVGet(state)
 	if kverr != nil {
-		p.API.LogError("Error retrieving stored state", "error", kverr.Error())
-		http.Error(w, "missing stored state", http.StatusInternalServerError)
+		p.API.LogError(ErrOAuthRetrievingState.Error(), "error", kverr.Error())
+		http.Error(w, ErrOAuthRetrievingState.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if string(storedState) != state {
-		p.API.LogError("Invalid state", "stored_state", string(storedState), "state", state)
-		http.Error(w, "invalid state", http.StatusBadRequest)
+		p.API.LogError(ErrOAuthInvalidState.Error(), "stored_state", string(storedState), "state", state)
+		http.Error(w, ErrOAuthInvalidState.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -151,7 +148,7 @@ func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.API.LogDebug("Webex User Connected", "webex_user_id", userInfo.ID)
+	p.API.LogInfo("Webex User Connected", "webex_user_id", userInfo.ID)
 
 	// publish an event to notify client(s)
 	p.API.PublishWebSocketEvent(
@@ -161,16 +158,12 @@ func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 		},
 		&model.WebsocketBroadcast{},
 	)
-	// UserId: userID,
 
 	// see if we had a redirect url in the state
 	val, kverr := p.API.KVGet(fmt.Sprintf("%s_redir", state))
 	if kverr != nil {
 		p.API.LogError("Error state", "error", kverr.Error())
 	}
-
-	fmt.Println("value bytes", string(val))
-	// p.API.LogDebug("is redirect", "val", val, "err", err.Error(), "val_str", string(val))
 
 	if kverr == nil && len(val) > 0 {
 		redirectURL, err := url.QueryUnescape(string(val))

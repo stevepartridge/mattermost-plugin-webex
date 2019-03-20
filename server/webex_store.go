@@ -12,8 +12,6 @@ import (
 // set in the config EncryptionKey generated field
 func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
 
-	p.API.LogDebug("storeWebexSession", "session_user_id", session.UserID)
-
 	if session.UserID == "" {
 		return ErrUnableToSaveSessionMissingUserID
 	}
@@ -58,13 +56,9 @@ func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
 // loadWebexSession retrieves the webex session if present from the KV store
 func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 
-	p.API.LogDebug("loadWebexSession", "userID", userID)
-
 	session := WebexOAuthSession{}
 
 	key := fmt.Sprintf("%s%s", WebexOAuthSessionKey, userID)
-
-	p.API.LogDebug("loadWebexSession", "userID", userID, "key", key)
 
 	data, appErr := p.API.KVGet(key)
 	if appErr != nil {
@@ -98,7 +92,6 @@ func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 
 	accessToken, err := decrypt([]byte(config.EncryptionKey), session.Token.AccessToken)
 	if err != nil {
-		p.API.LogError("Error decrypting session access token", "error", err.Error())
 		return session, err
 	}
 
@@ -109,7 +102,6 @@ func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 
 		refreshToken, err := decrypt([]byte(config.EncryptionKey), session.Token.RefreshToken)
 		if err != nil {
-			p.API.LogError("Error decrypting session refresh token", "error", err.Error())
 			return session, err
 		}
 
@@ -123,8 +115,6 @@ func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 // if not present will request from the webex API and subsequently save
 // it to the KV store if successful
 func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
-
-	p.API.LogDebug("getWebexUserInfo", "userID", userID)
 
 	webexUser, loadErr := p.loadWebexUser(userID)
 
@@ -155,8 +145,6 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 			return webexUser, err
 		}
 
-		p.API.LogDebug("Webex user", "person_id", person.ID)
-
 		webexUser.FromWebexPerson(person)
 
 		err = p.storeWebexUser(userID, webexUser)
@@ -175,8 +163,6 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 
 // loadWebexUser loads the webex user info from the KV store if present
 func (p *Plugin) loadWebexUser(userID string) (WebexUserInfo, error) {
-
-	p.API.LogDebug("loadWebexUser", "userID", userID)
 
 	webexUser := WebexUserInfo{}
 
@@ -208,8 +194,6 @@ func (p *Plugin) loadWebexUser(userID string) (WebexUserInfo, error) {
 // storeWebexUser saves the user info to the KV store
 func (p *Plugin) storeWebexUser(userID string, user WebexUserInfo) error {
 
-	p.API.LogDebug("storeWebexUser", "userID", userID)
-
 	if userID == "" {
 		return ErrUnableToSaveWebexUserMissingUserID
 	}
@@ -233,8 +217,6 @@ func (p *Plugin) storeWebexUser(userID string, user WebexUserInfo) error {
 
 // loadWebexUser loads the webex meeting info from the KV store if present
 func (p *Plugin) loadWebexMeeting(meetingID string) (WebexMeeting, error) {
-
-	p.API.LogDebug("loadWebexMeeting", "meetingID", meetingID)
 
 	webexMeeting := WebexMeeting{}
 
@@ -265,8 +247,6 @@ func (p *Plugin) loadWebexMeeting(meetingID string) (WebexMeeting, error) {
 
 // storeWebexUser saves the meeting info to the KV store
 func (p *Plugin) storeWebexMeeting(meeting WebexMeeting) error {
-
-	p.API.LogDebug("storeWebexMeeting", "meeting_id", meeting.ID)
 
 	if meeting.ID == "" {
 		return ErrUnableToSaveWebexMeetingMissingID

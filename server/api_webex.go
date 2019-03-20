@@ -84,10 +84,6 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("\n%+v\n\n", channel)
-
-	p.API.LogDebug("channel", "channel_id", channel.Id, "name", channel.Name, "session_user", sessionUserID, "type", channel.Type)
-
 	// Not sure how reliable this is...
 	toUserID := ""
 	parts := strings.Split(channel.Name, "__")

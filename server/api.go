@@ -18,7 +18,7 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 	switch {
 	// meeting route with id
-	case strings.Index(path, "/meetings/") == 0:
+	case strings.HasPrefix(path, "/meetings/"):
 		p.handleMeeting(w, r)
 		return
 	}

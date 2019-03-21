@@ -14,11 +14,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	baseOAuthConnectRequest  = httptest.NewRequest("GET", "/oauth2/connect", nil)
-	baseOAuthCallbackRequest = httptest.NewRequest("GET", "/oauth2/callback", nil)
-)
-
 // import (
 // 	"net/http"
 // 	"net/http/httptest"
@@ -117,7 +112,7 @@ func Test_HandleOAuthCallback_Success(t *testing.T) {
 	pluginConfig := basicConfig
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("req", r.RequestURI)
+
 		if r.RequestURI == "/v1/access_token" {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{
@@ -126,7 +121,9 @@ func Test_HandleOAuthCallback_Success(t *testing.T) {
   "refresh_token":"` + validToken.RefreshToken + `",
   "refresh_token_expires_in":7776000
 }`))
+
 		}
+
 	}))
 	defer ts.Close()
 
@@ -172,7 +169,6 @@ func Test_HandleOAuthCallback_Success(t *testing.T) {
 
 	api.Mock.On("KVSet", sessKey, mock.Anything).Return(nil)
 	api.Mock.On("KVSet", userKey, mock.Anything).Return(nil)
-	// api.Mock.On("KVSet", userKey, sessData).Return(nil)
 
 	api.Mock.On("KVGet", sessKey).Return(sessData, nil)
 	api.Mock.On("KVGet", userKey).Return(userData, nil)

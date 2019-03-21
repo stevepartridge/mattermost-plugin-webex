@@ -6,28 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"golang.org/x/oauth2"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/mattermost/mattermost-server/plugin/plugintest"
 	"github.com/mattermost/mattermost-server/plugin/plugintest/mock"
-)
-
-var (
-	validUserId = "abcd1234"
-	validToken  = oauth2.Token{
-		AccessToken:  "ZDI3MGEyYzQtNmFlNS00NDNhLWFlNzAtZGVjNjE0MGU1OGZmZWNmZDEwN2ItYTU3",
-		RefreshToken: "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTEyMzQ1Njc4",
-		Expiry:       time.Now().Add(time.Second * 1209600),
-	}
-
-	validUser = WebexUserInfo{
-		ID:          validUserId,
-		FirstName:   "First",
-		LastName:    "Last",
-		DisplayName: "First Last",
-	}
 )
 
 func TestLoadWebexSession_Success(t *testing.T) {
@@ -154,4 +136,18 @@ func TestStoreWebexUser_Success(t *testing.T) {
 	err = p.storeWebexUser(user.ID, user)
 	assert.NoError(t, err)
 
+}
+
+func makeSessionData(sess WebexOAuthSession) []byte {
+
+	expiry := time.Now().Add(time.Minute * 5).UTC()
+	sess.Token.Expiry = expiry
+
+	sess.Token.AccessToken, _ = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.AccessToken)
+
+	sess.Token.RefreshToken, _ = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.RefreshToken)
+
+	sessData, _ := json.Marshal(sess)
+
+	return sessData
 }

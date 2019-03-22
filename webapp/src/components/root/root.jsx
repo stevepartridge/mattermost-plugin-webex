@@ -24,13 +24,6 @@ export default class Root extends React.PureComponent {
 
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-    };
-  }
-
   handleClose = () => {
     this.props.actions.closeRootModal();
   };

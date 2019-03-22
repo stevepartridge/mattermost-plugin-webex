@@ -49,12 +49,6 @@ export default class PostTypeWebex extends React.PureComponent {
         isRHS: false,
     };
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-        };
-    }
 
     render() {
         const style = getStyle(this.props.theme);

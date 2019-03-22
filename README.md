@@ -19,10 +19,17 @@ _https://your-mattermost-site-url/plugins/webex/oauth2/callback_
 
 Additionally for scopes select ```spark:all``` and scroll on down to submit _Add Integration_
 
-
 ## Installation
 
 Go to the [releases page of this Github repository](https://github.com/mattermost/mattermost-plugin-webex/releases) and download the latest release for your server architecture. You can upload this file in the Mattermost system console to install the plugin.
+
+
+## Configuration 
+
+The configuration is fairly simple once you've created an integration.  After you _Add Integration_ you'll be given a Client ID and a Client Secret listed under 'OAuth Settings'. 
+
+Use these to set the **OAuth Client ID** and **OAuth Client Secret** under the System Console in Mattermost (Main Menu > System Console > Plugins > Webex).  Be sure to generate an excryption key as well.  
+
 
 ## Developing
 

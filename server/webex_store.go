@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 )
@@ -54,9 +53,9 @@ func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
 }
 
 // loadWebexSession retrieves the webex session if present from the KV store
-func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
+func (p *Plugin) loadWebexSession(userID string) (*WebexOAuthSession, error) {
 
-	session := WebexOAuthSession{}
+	var session *WebexOAuthSession
 
 	key := fmt.Sprintf("%s%s", WebexOAuthSessionKey, userID)
 
@@ -85,9 +84,9 @@ func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 	if time.Now().UTC().After(session.Token.Expiry) {
 		kvErr := p.API.KVDelete(key)
 		if kvErr != nil {
-			return WebexOAuthSession{}, kvErr
+			return nil, kvErr
 		}
-		return WebexOAuthSession{}, ErrWebexSessionExpired
+		return nil, ErrWebexSessionExpired
 	}
 
 	accessToken, err := decrypt([]byte(config.EncryptionKey), session.Token.AccessToken)
@@ -114,7 +113,7 @@ func (p *Plugin) loadWebexSession(userID string) (WebexOAuthSession, error) {
 // getWebexUserInfo retrieves the webex user info from the KV store and
 // if not present will request from the webex API and subsequently save
 // it to the KV store if successful
-func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
+func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 
 	webexUser, loadErr := p.loadWebexUser(userID)
 
@@ -131,12 +130,6 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 		if err != nil {
 			p.API.LogError("Error creating new webex client", "error", err.Error())
 			return webexUser, err
-		}
-
-		// unlikely, but just in case to avoid angry panics
-		if webex == nil {
-			p.API.LogError("nil webex client")
-			return webexUser, errors.New("webex client is nil")
 		}
 
 		person, _, err := webex.People.GetMe() // don't need resp so supressing it
@@ -162,9 +155,9 @@ func (p *Plugin) getWebexUserInfo(userID string) (WebexUserInfo, error) {
 }
 
 // loadWebexUser loads the webex user info from the KV store if present
-func (p *Plugin) loadWebexUser(userID string) (WebexUserInfo, error) {
+func (p *Plugin) loadWebexUser(userID string) (*WebexUserInfo, error) {
 
-	webexUser := WebexUserInfo{}
+	var webexUser *WebexUserInfo
 
 	key := fmt.Sprintf("%s%s", WebexUserKey, userID)
 
@@ -192,10 +185,14 @@ func (p *Plugin) loadWebexUser(userID string) (WebexUserInfo, error) {
 }
 
 // storeWebexUser saves the user info to the KV store
-func (p *Plugin) storeWebexUser(userID string, user WebexUserInfo) error {
+func (p *Plugin) storeWebexUser(userID string, user *WebexUserInfo) error {
 
 	if userID == "" {
 		return ErrUnableToSaveWebexUserMissingUserID
+	}
+
+	if user == nil {
+		return ErrUnableToSaveWebexUserMissingUser
 	}
 
 	key := fmt.Sprintf("%s%s", WebexUserKey, userID)

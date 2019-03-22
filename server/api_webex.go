@@ -119,9 +119,9 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		ID:            model.NewId(),
 		ChannelID:     channel.Id,
 		FromUserID:    sessionUserID,
-		FromWebexUser: user,
+		FromWebexUser: *user,
 		ToUserID:      toUserID,
-		ToWebexUser:   toWebexUser,
+		ToWebexUser:   *toWebexUser,
 	}
 
 	if isGuest {

@@ -4,7 +4,6 @@ import (
 	"golang.org/x/oauth2"
 
 	webexteams "github.com/jbogarin/go-cisco-webex-teams/sdk"
-	"gopkg.in/resty.v1"
 )
 
 type WebexUserInfo struct {
@@ -42,17 +41,4 @@ func (self *WebexUserInfo) FromWebexPerson(person *webexteams.Person) {
 type WebexOAuthSession struct {
 	UserID string       `json:"user_id"`
 	Token  oauth2.Token `json:"token"`
-}
-
-// NewWebexClient is a helper to create a new webex sdk client
-// references:
-//   https://github.com/jbogarin/go-cisco-webex-teams
-//   https://github.com/jbogarin/go-cisco-webex-teams/blob/master/examples/people/main.go#L15-L18
-func NewWebexClient(token string) (*webexteams.Client, error) {
-
-	client := resty.New()
-
-	client.SetAuthToken(token)
-
-	return webexteams.NewClient(client), nil
 }

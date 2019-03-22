@@ -28,6 +28,8 @@ Go to the [releases page of this Github repository](https://github.com/mattermos
 
 The configuration is fairly simple once you've created an integration.  After you _Add Integration_ you'll be given a Client ID and a Client Secret listed under 'OAuth Settings'. 
 
+![alt text](docs/assets/oauth-setting.png "OAuth Settings")
+
 Use these to set the **OAuth Client ID** and **OAuth Client Secret** under the System Console in Mattermost (Main Menu > System Console > Plugins > Webex).  Be sure to generate an excryption key as well.  
 
 

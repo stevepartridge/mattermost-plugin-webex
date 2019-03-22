@@ -17,6 +17,7 @@ var (
 
 	ErrWebexUserNotFound                  = errors.New("Webex user not found")
 	ErrUnableToSaveWebexUserMissingUserID = errors.New("Unable to save webex user, missing user ID")
+	ErrUnableToSaveWebexUserMissingUser   = errors.New("Unable to save webex user, user is nil")
 
 	ErrWebexNotConnected = errors.New("Webex account not connected")
 
@@ -26,4 +27,6 @@ var (
 	ErrCreateMeetingToUserIdNotFound = errors.New("Unable to create new meeting User Not Found")
 
 	ErrWebexMeetingNotFound = errors.New("Webex meeting not found")
+
+	ErrWebexClientMissingToken = errors.New("Unable to create new WebexClient, missing token")
 )

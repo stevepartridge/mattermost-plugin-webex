@@ -7,7 +7,7 @@ You will need an existing admin account for Webex Teams in order to create an in
 
 #### Create Webex Integration
 
-Connecting Mattermost users to thier Webex accounts requires [creating an integration](https://developer.webex.com/my-apps/new/integration).  
+Connecting Mattermost users to their Webex accounts requires [creating an integration](https://developer.webex.com/my-apps/new/integration).  
 
 ![alt text](docs/assets/new-integration.png "New Integration")
 

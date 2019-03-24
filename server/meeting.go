@@ -27,6 +27,8 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	siteURL := p.API.GetConfig().ServiceSettings.SiteURL
+
 	// Ensure the current user is connected to webex
 	session, err := p.loadWebexSession(sessionUserID)
 	switch {
@@ -35,11 +37,10 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 		err == ErrWebexSessionNotFound:
 
 		// Set up a redirect so we can bring them back to the proper location
-		siteUrl := p.API.GetConfig().ServiceSettings.SiteURL
-		redirectURL := fmt.Sprintf("%s%s", *siteUrl, r.RequestURI)
+		redirectURL := fmt.Sprintf("%s%s", *siteURL, r.RequestURI)
 		oauthConnectURL := fmt.Sprintf(
 			"%s/plugins/%s/oauth2/connect?redirect_to=%s",
-			*siteUrl,
+			*siteURL,
 			manifest.Id,
 			url.QueryEscape(redirectURL),
 		)
@@ -80,7 +81,7 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 		meetingWithName = meeting.GuestEmail
 
 		destinationDataAttributes = `
-    data-to-person-email="` + meeting.GuestEmail + `" 
+    data-to-person-email="` + meeting.GuestEmail + `"
   `
 	}
 
@@ -128,19 +129,19 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
   <meta charset="utf8">
 
   <title>Webex Meeting with ` + meetingWithName + `</title>
-  <link rel="stylesheet" href="https://code.s4d.io/widget-space/production/main.css">
+  <link rel="stylesheet" href="` + *siteURL + `/static/plugins/webex/external/spark.css">
 </head>
 <body>
 
   <div style="width: 100%; height: 100%;"
-    id="space"        
+    id="space"
     data-toggle="ciscospark-space"
     data-initial-activity="meet"
     data-access-token="` + session.Token.AccessToken + `"
     ` + destinationDataAttributes + `
     />
-  
-  <script src="https://code.s4d.io/widget-space/production/bundle.js"></script>
+
+  <script src="` + *siteURL + `/static/plugins/webex/external/spark.js"></script>
 </body>
 </html>`
 

@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
 	ErrNotAuthorized            = errors.New("Not authorized")
@@ -25,8 +28,14 @@ var (
 
 	ErrCreateMeetingFailedOwnChannel = errors.New("Unable to create new meeting with self")
 	ErrCreateMeetingToUserIdNotFound = errors.New("Unable to create new meeting User Not Found")
+	ErrCreateMeetingTypeNotSupported = errors.New("Unable to create new meeting Type %s not supported")
 
 	ErrWebexMeetingNotFound = errors.New("Webex meeting not found")
 
 	ErrWebexClientMissingToken = errors.New("Unable to create new WebexClient, missing token")
 )
+
+// ErrReplacer allows for static errors to have dynamic values
+func ErrReplacer(err error, replacers ...interface{}) error {
+	return fmt.Errorf(err.Error(), replacers...)
+}

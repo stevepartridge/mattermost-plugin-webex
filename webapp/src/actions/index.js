@@ -31,12 +31,12 @@ export function getConnected() {
   return (dispatch) => {
 
     return Client.getConnected().then(response => {
-    
+
       if (!response) {
         dispatch({
           type: ActionTypes.AUTH_DISCONNECTED
         });
-        return 
+        return
       }
       dispatch({
         type: ActionTypes.AUTH_CONNECTED,
@@ -51,25 +51,10 @@ export function getConnected() {
   }
 }
 
-// Get join url:
-export function getOAuthConnectURL(channelId, meetingid, creatorid) {
-  return async (dispatch, getState) => {
-  
-  try {
-    data = await Client.getOAuthConnectURL();
-    return {
-    data: data
-    };
-  } catch (error) {
-    return {error};
-  }
-  };
-}
-
 export function startMeeting(channelId) {
   return async (dispatch, getState) => {
     console.log("start meeting");
-    
+
     let data;
     try {
       data = await Client.startMeeting(channelId, true);
@@ -84,7 +69,7 @@ export function startMeeting(channelId) {
         type: ActionTypes.MEETING_CREATED_ERROR,
         data,
       });
-      
+
       const post = {
         id: 'webexPlugin' + Date.now(),
         create_at: Date.now(),
@@ -116,7 +101,7 @@ export function startMeeting(channelId) {
       });
 
       return data;
-    } 
+    }
 
     dispatch({
       type: ActionTypes.MEETING_CREATED,
@@ -131,7 +116,7 @@ export function notifyCanStartMeeting() {
   return (dispatch, getState) => {
 
     let channelId = getState().entities.channels.currentChannelId
-    
+
     const post = {
         id: 'webexPlugin' + Date.now(),
         create_at: Date.now(),

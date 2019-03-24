@@ -13,8 +13,8 @@ export function handleWebexConnected(store) {
         }
 
         if (msg.data.success) {
-          getConnected()(store.dispatch, store.getState);
-          notifyCanStartMeeting()(store.dispatch, store.getState);
+          store.dispatch(getConnected());
+          store.dispatch(notifyCanStartMeeting());
         }
     };
 }

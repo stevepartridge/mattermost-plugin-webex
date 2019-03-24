@@ -84,6 +84,14 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if channel.Type != model.CHANNEL_DIRECT {
+		JSONErrorResponse(w,
+			ErrReplacer(ErrCreateMeetingTypeNotSupported, model.CHANNEL_DIRECT),
+			http.StatusBadRequest,
+		)
+		return
+	}
+
 	// Not sure how reliable this is...
 	toUserID := ""
 	parts := strings.Split(channel.Name, "__")
@@ -121,7 +129,10 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		FromUserID:    sessionUserID,
 		FromWebexUser: *user,
 		ToUserID:      toUserID,
-		ToWebexUser:   *toWebexUser,
+	}
+
+	if toWebexUser != nil {
+		meeting.ToWebexUser = *toWebexUser
 	}
 
 	if isGuest {

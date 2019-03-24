@@ -10,7 +10,7 @@ import (
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	config := p.getConfiguration()
 	if err := config.IsValid(); err != nil {
-		http.Error(w, "This plugin is not configured.", http.StatusNotImplemented)
+		http.Error(w, "This plugin is not configured.", http.StatusInternalServerError)
 		return
 	}
 

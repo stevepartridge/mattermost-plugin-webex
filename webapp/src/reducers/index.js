@@ -5,26 +5,6 @@ import {combineReducers} from 'redux';
 
 import ActionTypes from '../action_types';
 
-function connected(state = false, action) {
-    switch (action.type) {
-    case ActionTypes.AUTH_CONNECTED:
-      return action.data;
-    default:
-      return state;
-    }
-}
-
-function disconnected(state = true, action) {
-    switch (action.type) {
-    case ActionTypes.AUTH_CONNECTED:
-      return false;
-    case ActionTypes.AUTH_DISCONNECTED:
-      return true;
-    default:
-      return state;
-    }
-}
-
 function authenticated(state = {user : {}, session: {}}, action) {
     switch (action.type) {
     case ActionTypes.AUTH_CONNECTED:
@@ -52,7 +32,7 @@ const rootModalVisible = (state = false, action) => {
     case ActionTypes.MEETING_CREATED_ERROR:
       if (action.data.message === 'Webex account not connected') {
         return true;
-      }      
+      }
     case ActionTypes.AUTH_CONNECTED:
     case ActionTypes.CLOSE_ROOT_MODAL:
       return false;

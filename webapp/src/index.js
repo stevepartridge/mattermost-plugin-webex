@@ -13,6 +13,8 @@ import {handleWebexConnected} from './websocket';
 
 import Reducer from './reducers';
 
+require.context("./external/", true, /\.(js|css)$/);
+
 class Plugin {
     // eslint-disable-next-line no-unused-vars
     async initialize(registry, store) {

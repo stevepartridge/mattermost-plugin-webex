@@ -13,10 +13,9 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.css$/, loader: "style-loader!css-loader" },
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
+                exclude: /node_modules|external/,
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -28,6 +27,31 @@ module.exports = {
                     },
                 },
             },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'images/[name].[ext]',
+                            publicPath: '/static/plugins/webex/'
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(js|css)$/,
+                include: /external/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'external/[name].[ext]',
+                            publicPath: '/static/plugins/webex/'
+                        }
+                    }
+                ]
+            }
         ],
     },
     externals: {
@@ -38,6 +62,9 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/dist'),
         publicPath: '/',
-        filename: 'main.js',
+        filename: 'main.js'
+        // require.context("./images/", true, /\.(png|svg|jpg|gif)$/)
     },
 };
+
+// require.context("../images/", true, /\.(png|svg|jpg|gif)$/);

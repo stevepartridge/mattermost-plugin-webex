@@ -30,7 +30,7 @@ function authenticated(state = {user : {}, session: {}}, action) {
     case ActionTypes.AUTH_CONNECTED:
       return action.data;
     case ActionTypes.AUTH_DISCONNECTED:
-      return true;
+      return false;
     default:
       return state;
     }
@@ -62,8 +62,6 @@ const rootModalVisible = (state = false, action) => {
 };
 
 export default combineReducers({
-    connected,
-    disconnected,
     authenticated,
     rootModalVisible
 });

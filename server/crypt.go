@@ -10,9 +10,6 @@ import (
 	"io"
 )
 
-// Lovingly thieved from the github plugin
-//
-
 func pad(src []byte) []byte {
 	padding := aes.BlockSize - len(src)%aes.BlockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)

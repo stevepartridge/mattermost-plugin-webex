@@ -161,7 +161,7 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 			"meeting_topic":     "Webex Meeting",
 			"from_webhook":      "true",
 			"override_username": "Webex",
-			"override_icon_url": "https://smartsolutioncomputer.com/upload-img/Products/Cisco/Webex-logo.png",
+			"override_icon_url": fmt.Sprintf("%s/static/plugins/%s/images/webex-logo.png", *siteURL, manifest.Id),
 		},
 	}
 

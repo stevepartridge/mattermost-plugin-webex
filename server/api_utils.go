@@ -21,18 +21,16 @@ func JSONResponse(w http.ResponseWriter, v interface{}, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	w.Write(data)
-
 }
 
 // JSONResponse is a helper method to easily write out a json response
 // with error message and status code
 func JSONErrorResponse(w http.ResponseWriter, err error, statusCode int) {
-
 	data := map[string]interface{}{
 		"error":       true,
 		"message":     err.Error(),
 		"status_code": statusCode,
 	}
-	JSONResponse(w, data, statusCode)
 
+	JSONResponse(w, data, statusCode)
 }

@@ -138,6 +138,7 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 			return webexUser, err
 		}
 
+		webexUser = &WebexUserInfo{}
 		webexUser.FromWebexPerson(person)
 
 		err = p.storeWebexUser(userID, webexUser)
@@ -147,7 +148,7 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 		}
 
 	case (loadErr != nil):
-		return webexUser, loadErr
+		return nil, loadErr
 	}
 
 	return webexUser, nil

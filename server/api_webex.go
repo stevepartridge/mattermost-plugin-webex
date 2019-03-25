@@ -151,7 +151,7 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 		UserId:    sessionUserID,
 		ChannelId: channel.Id,
 		Message:   fmt.Sprintf("Webex Meeting started: %s", meeting.URL),
-		Type:      "custom_zoom",
+		Type:      "custom_webex",
 		Props: map[string]interface{}{
 			"meeting_id":        meeting.ID,
 			"meeting_link":      meeting.URL,

@@ -49,7 +49,6 @@ export default class PostTypeWebex extends React.PureComponent {
         isRHS: false,
     };
 
-
     render() {
         const style = getStyle(this.props.theme);
         const post = this.props.post;
@@ -71,7 +70,17 @@ export default class PostTypeWebex extends React.PureComponent {
                     <i
                         style={style.buttonIcon}
                     >
-                        {Svgs.VIDEO_CAMERA_3}
+                        <svg
+                            width='24px'
+                            height='24px'
+                            viewBox='0 0 24 24'
+                            style={style.webexLogo}
+                        >
+                            <path
+                                fill='#FFFFFF'
+                                d='M12,3A9,9 0 0,1 21,12A9,9 0 0,1 12,21A9,9 0 0,1 3,12A9,9 0 0,1 12,3M5.94,8.5C4,11.85 5.15,16.13 8.5,18.06C11.85,20 18.85,7.87 15.5,5.94C12.15,4 7.87,5.15 5.94,8.5Z'
+                            />
+                        </svg>
                     </i>
                     {'JOIN MEETING'}
                 </a>
@@ -176,10 +185,19 @@ const getStyle = makeStyleFromTheme((theme) => {
             lineHeight: '19px',
             marginTop: '12px',
             borderRadius: '4px',
+
+            // maxHeight: '20px',
+            paddingTop: '0px',
+            paddingLeft: '12px',
             color: theme.buttonColor,
         },
         buttonIcon: {
-            paddingRight: '8px',
+            padding: '0',
+
+            marginTop: '5px',
+            paddingRight: '6px',
+            width: '14px',
+            height: '19px',
             fill: theme.buttonColor,
         },
         summary: {
@@ -195,5 +213,11 @@ const getStyle = makeStyleFromTheme((theme) => {
             fontSize: '14px',
             lineHeight: '26px',
         },
+        webexLogo: {
+            width: '24px',
+            height: '24px',
+            position: 'relative',
+            top: '7px',
+        }
     };
 });

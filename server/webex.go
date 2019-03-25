@@ -23,7 +23,6 @@ type WebexUserInfo struct {
 
 // FromWebexPerson is a helper to build out a WebexUserInfo from a webex object
 func (self *WebexUserInfo) FromWebexPerson(person *webexteams.Person) {
-
 	if person == nil {
 		return
 	}

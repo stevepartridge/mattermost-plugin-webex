@@ -16,7 +16,6 @@ import (
 )
 
 func TestStartMeeting_Success(t *testing.T) {
-
 	req := baseAPIV1MeetingRequest
 	req.Header.Set("Mattermost-User-ID", validUserId)
 

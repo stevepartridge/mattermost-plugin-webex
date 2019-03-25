@@ -43,12 +43,10 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 	default:
 		http.NotFound(w, r)
 	}
-
 }
 
 // handleConnected checks if the user has connected their webex account
 func (p *Plugin) handleConnected(w http.ResponseWriter, r *http.Request) {
-
 	requestorID := r.Header.Get("Mattermost-User-ID")
 	if requestorID == "" {
 		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
@@ -75,5 +73,4 @@ func (p *Plugin) handleConnected(w http.ResponseWriter, r *http.Request) {
 		"user":    user,
 		"session": session,
 	}, http.StatusOK)
-
 }

@@ -36,7 +36,6 @@ type StartMeetingRequest struct {
 }
 
 func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
-
 	sessionUserID := r.Header.Get("Mattermost-User-Id")
 	if sessionUserID == "" {
 		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
@@ -178,5 +177,4 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	JSONResponse(w, map[string]interface{}{"meeting": meeting}, http.StatusOK)
-
 }

@@ -43,7 +43,6 @@ import (
 // }
 
 func TestGetOAuthConfig_Success(t *testing.T) {
-
 	api := &plugintest.API{}
 	p := Plugin{}
 
@@ -65,11 +64,9 @@ func TestGetOAuthConfig_Success(t *testing.T) {
 	conf := p.getOAuthConfig()
 
 	assert.Equal(t, conf.ClientID, basicConfig.OAuthClientID)
-
 }
 
 func Test_HandleOAuthConnect_Success(t *testing.T) {
-
 	pluginConfig := basicConfig
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -104,11 +101,9 @@ func Test_HandleOAuthConnect_Success(t *testing.T) {
 	p.ServeHTTP(&plugin.Context{}, w, req)
 
 	assert.Equal(t, 302, w.Result().StatusCode)
-
 }
 
 func Test_HandleOAuthCallback_Success(t *testing.T) {
-
 	pluginConfig := basicConfig
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -188,5 +183,4 @@ func Test_HandleOAuthCallback_Success(t *testing.T) {
 	p.ServeHTTP(&plugin.Context{}, w, req)
 
 	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
-
 }

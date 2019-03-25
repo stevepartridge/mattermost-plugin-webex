@@ -13,7 +13,6 @@ import (
 )
 
 func TestLoadWebexSession_Success(t *testing.T) {
-
 	api := &plugintest.API{}
 
 	sess := WebexOAuthSession{
@@ -50,11 +49,9 @@ func TestLoadWebexSession_Success(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.EqualValues(t, expected, actual)
-
 }
 
 func TestStoreWebexSession_Success(t *testing.T) {
-
 	api := &plugintest.API{}
 
 	sess := WebexOAuthSession{
@@ -85,11 +82,9 @@ func TestStoreWebexSession_Success(t *testing.T) {
 
 	err = p.storeWebexSession(sess)
 	assert.NoError(t, err)
-
 }
 
 func TestLoadWebexUser_Success(t *testing.T) {
-
 	api := &plugintest.API{}
 
 	user := validUser
@@ -113,11 +108,9 @@ func TestLoadWebexUser_Success(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.EqualValues(t, expected, actual)
-
 }
 
 func TestStoreWebexUser_Success(t *testing.T) {
-
 	api := &plugintest.API{}
 
 	user := validUser
@@ -135,11 +128,32 @@ func TestStoreWebexUser_Success(t *testing.T) {
 
 	err = p.storeWebexUser(user.ID, user)
 	assert.NoError(t, err)
+}
 
+func TestGetWebexUserInfo_Success(t *testing.T) {
+	api := &plugintest.API{}
+
+	webexUserInfo := WebexUserInfo{}
+	data, _ := json.Marshal(webexUserInfo)
+	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID)).Return(data, nil)
+	api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID), mock.Anything).Return(nil)
+
+	p := Plugin{}
+
+	p.setConfiguration(basicConfig)
+
+	p.SetAPI(api)
+
+	err := p.OnActivate()
+	assert.NoError(t, err)
+
+	user, err := p.getWebexUserInfo(validUser.ID)
+	assert.NoError(t, err)
+
+	assert.EqualValues(t, validUserId, user.ID)
 }
 
 func makeSessionData(sess WebexOAuthSession) []byte {
-
 	expiry := time.Now().Add(time.Minute * 5).UTC()
 	sess.Token.Expiry = expiry
 

@@ -10,7 +10,6 @@ import (
 // AccessToken and RefreshToken are both encrypted with the key
 // set in the config EncryptionKey generated field
 func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
-
 	if session.UserID == "" {
 		return ErrUnableToSaveSessionMissingUserID
 	}
@@ -49,12 +48,10 @@ func (p *Plugin) storeWebexSession(session WebexOAuthSession) error {
 	}
 
 	return nil
-
 }
 
 // loadWebexSession retrieves the webex session if present from the KV store
 func (p *Plugin) loadWebexSession(userID string) (*WebexOAuthSession, error) {
-
 	key := fmt.Sprintf("%s%s", WebexOAuthSessionKey, userID)
 
 	data, appErr := p.API.KVGet(key)
@@ -114,7 +111,6 @@ func (p *Plugin) loadWebexSession(userID string) (*WebexOAuthSession, error) {
 // if not present will request from the webex API and subsequently save
 // it to the KV store if successful
 func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
-
 	webexUser, loadErr := p.loadWebexUser(userID)
 
 	switch {
@@ -152,12 +148,10 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 	}
 
 	return webexUser, nil
-
 }
 
 // loadWebexUser loads the webex user info from the KV store if present
 func (p *Plugin) loadWebexUser(userID string) (*WebexUserInfo, error) {
-
 	key := fmt.Sprintf("%s%s", WebexUserKey, userID)
 
 	data, appErr := p.API.KVGet(key)
@@ -187,7 +181,6 @@ func (p *Plugin) loadWebexUser(userID string) (*WebexUserInfo, error) {
 
 // storeWebexUser saves the user info to the KV store
 func (p *Plugin) storeWebexUser(userID string, user *WebexUserInfo) error {
-
 	if userID == "" {
 		return ErrUnableToSaveWebexUserMissingUserID
 	}
@@ -210,12 +203,10 @@ func (p *Plugin) storeWebexUser(userID string, user *WebexUserInfo) error {
 	}
 
 	return nil
-
 }
 
 // loadWebexUser loads the webex meeting info from the KV store if present
 func (p *Plugin) loadWebexMeeting(meetingID string) (*WebexMeeting, error) {
-
 	key := fmt.Sprintf("%s%s", WebexMeetingKey, meetingID)
 
 	data, appErr := p.API.KVGet(key)
@@ -245,7 +236,6 @@ func (p *Plugin) loadWebexMeeting(meetingID string) (*WebexMeeting, error) {
 
 // storeWebexUser saves the meeting info to the KV store
 func (p *Plugin) storeWebexMeeting(meeting WebexMeeting) error {
-
 	if meeting.ID == "" {
 		return ErrUnableToSaveWebexMeetingMissingID
 	}
@@ -264,5 +254,4 @@ func (p *Plugin) storeWebexMeeting(meeting WebexMeeting) error {
 	}
 
 	return nil
-
 }

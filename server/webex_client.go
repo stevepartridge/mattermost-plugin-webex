@@ -12,7 +12,6 @@ import (
 //   https://github.com/jbogarin/go-cisco-webex-teams
 //   https://github.com/jbogarin/go-cisco-webex-teams/blob/master/examples/people/main.go#L15-L18
 func NewWebexClient(token string) (*webexteams.Client, error) {
-
 	if token == "" {
 		return nil, ErrWebexClientMissingToken
 	}

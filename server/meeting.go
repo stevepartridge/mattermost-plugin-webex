@@ -20,7 +20,6 @@ type WebexMeeting struct {
 }
 
 func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
-
 	sessionUserID := r.Header.Get("Mattermost-User-Id")
 	if sessionUserID == "" {
 		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
@@ -147,5 +146,4 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(html))
-
 }

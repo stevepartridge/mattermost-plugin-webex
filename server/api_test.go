@@ -27,7 +27,6 @@ var (
 )
 
 func TestConnected_Fail_NotAuthorizedNoHeaderMMUserID(t *testing.T) {
-
 	req := baseConnectedRequest
 
 	api := &plugintest.API{}
@@ -42,7 +41,6 @@ func TestConnected_Fail_NotAuthorizedNoHeaderMMUserID(t *testing.T) {
 }
 
 func TestConnected_Fail_WebexNotConnected(t *testing.T) {
-
 	req := baseConnectedRequest
 	req.Header.Set("Mattermost-User-ID", "abcd1234")
 
@@ -61,7 +59,6 @@ func TestConnected_Fail_WebexNotConnected(t *testing.T) {
 }
 
 func TestConnected_Success_WebexConnected(t *testing.T) {
-
 	req := baseConnectedRequest
 	req.Header.Set("Mattermost-User-ID", validUserId)
 

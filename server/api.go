@@ -2,10 +2,30 @@ package main
 
 import (
 	"net/http"
-	"strings"
 
+	"github.com/go-chi/chi"
 	"github.com/mattermost/mattermost-server/plugin"
 )
+
+func (p *Plugin) prepareRoutes() {
+
+	p.mux = chi.NewRouter()
+
+	// Connceted check
+	p.mux.Get("/connected", p.handleConnected)
+
+	// OAuth
+	p.mux.Get("/oauth2/connect", p.handleOAuthConnect)
+	p.mux.Get("/oauth2/callback", p.handleOAuthCallback)
+
+	// Meeting
+	p.mux.Get("/meetings/{meeting_id}", p.handleMeeting)
+
+	// API
+	p.mux.Post("/api/v1/meetings", p.handleStartMeeting)
+	p.mux.Get("/api/v1/user", p.handleGetWebexUser)
+
+}
 
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	config := p.getConfiguration()
@@ -14,35 +34,11 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	path := r.URL.Path
-
-	switch {
-	// meeting route with id
-	case strings.HasPrefix(path, "/meetings/"):
-		p.handleMeeting(w, r)
-		return
+	if p.mux == nil {
+		p.prepareRoutes()
 	}
 
-	switch path {
-
-	// connect check
-	case "/connected":
-		p.handleConnected(w, r)
-
-	// oauth routes
-	case "/oauth2/connect":
-		p.handleOAuthConnect(w, r)
-	case "/oauth2/callback":
-		p.handleOAuthCallback(w, r)
-
-	// api routes
-	case "/api/v1/meetings":
-		p.handleStartMeeting(w, r)
-	case "/api/v1/user":
-		p.handleGetWebexUser(w, r)
-	default:
-		http.NotFound(w, r)
-	}
+	p.mux.ServeHTTP(w, r)
 }
 
 // handleConnected checks if the user has connected their webex account

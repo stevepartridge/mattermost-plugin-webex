@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/go-chi/chi"
 )
 
 // WebexMeeting
@@ -52,7 +54,7 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	meetingID := strings.Replace(r.URL.Path, "/meetings/", "", 1)
+	meetingID := chi.URLParam(r, "meeting_id")
 	p.API.LogDebug("Load meeting", "meeting_id", meetingID)
 
 	meeting, err := p.loadWebexMeeting(meetingID)

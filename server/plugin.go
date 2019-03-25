@@ -3,6 +3,7 @@ package main
 import (
 	"sync"
 
+	"github.com/go-chi/chi"
 	"github.com/mattermost/mattermost-server/plugin"
 )
 
@@ -29,6 +30,8 @@ type Plugin struct {
 	// configuration is the active plugin configuration. Consult getConfiguration and
 	// setConfiguration for usage.
 	configuration *configuration
+
+	mux *chi.Mux
 }
 
 // See https://developers.mattermost.com/extend/plugins/server/reference/
@@ -38,6 +41,8 @@ func (p *Plugin) OnActivate() error {
 	if err := config.IsValid(); err != nil {
 		return err
 	}
+
+	p.prepareRoutes()
 
 	return nil
 }

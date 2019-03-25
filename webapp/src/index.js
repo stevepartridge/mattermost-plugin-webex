@@ -13,12 +13,11 @@ import {handleWebexConnected} from './websocket';
 
 import Reducer from './reducers';
 
-require.context("./external/", true, /\.(js|css)$/);
+require.context('./external/', true, /\.(js|css)$/);
 
 class Plugin {
     // eslint-disable-next-line no-unused-vars
     async initialize(registry, store) {
-
         registry.registerReducer(Reducer);
 
         await getConnected()(store.dispatch, store.getState);
@@ -32,9 +31,9 @@ class Plugin {
         );
         registry.registerPostTypeComponent('custom_webex', PostTypeWebex);
 
-        registry.registerWebSocketEventHandler('custom_webex_oauth_success', handleWebexConnected(store))
+        registry.registerWebSocketEventHandler('custom_webex_oauth_success', handleWebexConnected(store));
 
-        registry.registerRootComponent(Root)
+        registry.registerRootComponent(Root);
     }
 }
 

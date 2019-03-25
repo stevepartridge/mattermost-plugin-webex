@@ -7,39 +7,39 @@ import {unauthorized} from '../actions';
 
 export default class Client {
     constructor() {
-        this.url = '/plugins/' + id ;
+        this.url = '/plugins/' + id;
     }
 
     getConnected = async () => {
-        const req = this.request('POST', '/connected');
+        const req = this.request('GET', '/connected');
 
-        return fetch(req)
-            .then(response =>{
-                return this.response(response)
-            })
-            .then(data => {
-              return data
-            }).catch(error => {
+        return fetch(req).
+            then((response) => {
+                return this.response(response);
+            }).
+            then((data) => {
+                return data;
+            }).catch((error) => {
                 throw error;
             });
     }
 
     startMeeting = (channelId, personal = true, topic = '', meetingId = 0) => {
-
         const payload = {
-                channel_id: channelId, 
-                personal, topic, 
-                meeting_id: meetingId
-            };
+            channel_id: channelId,
+            personal,
+            topic,
+            meeting_id: meetingId,
+        };
 
         const request = this.request('POST', '/api/v1/meetings', payload);
 
-        return fetch(request)
-          .then(response =>
-            this.response(response)
-          ).catch(error => {
-            return error;
-          });
+        return fetch(request).
+            then((response) =>
+                this.response(response)
+            ).catch((error) => {
+                return error;
+            });
     }
 
     getWebexUser = async (userID) => {
@@ -47,21 +47,20 @@ export default class Client {
     }
 
     request = (method, path, payload) => {
-
         var req = {
-          method  : method,
-          headers : {
-            'X-Requested-With'  : 'XMLHttpRequest',
-            'X-Timezone-Offset' : new Date().getTimezoneOffset()
-          }
+            method,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-Timezone-Offset': new Date().getTimezoneOffset(),
+            },
         };
 
         if (payload) {
-          req.body = JSON.stringify(payload);
+            req.body = JSON.stringify(payload);
         }
 
         const r = new Request(`${this.url}${path}`,
-          req
+            req
         );
 
         return r;
@@ -69,21 +68,20 @@ export default class Client {
 
     response = (response) => {
         switch (response.status) {
-          case 403:
+        case 403:
             // permissionDenied();
             break;
-          case 401:
+        case 401:
             unauthorized();
             break;
-          default: 
+        default:
             // success();
             break;
         }
 
-        return response.json().then(data => (
+        return response.json().then((data) => (
             data
-          )
         )
+        );
     }
-
 }

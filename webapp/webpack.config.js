@@ -34,10 +34,10 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: 'images/[name].[ext]',
-                            publicPath: '/static/plugins/webex/'
-                        }
-                    }
-                ]
+                            publicPath: '/static/plugins/webex/',
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(js|css)$/,
@@ -47,11 +47,11 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: 'external/[name].[ext]',
-                            publicPath: '/static/plugins/webex/'
-                        }
-                    }
-                ]
-            }
+                            publicPath: '/static/plugins/webex/',
+                        },
+                    },
+                ],
+            },
         ],
     },
     externals: {
@@ -62,9 +62,6 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/dist'),
         publicPath: '/',
-        filename: 'main.js'
-        // require.context("./images/", true, /\.(png|svg|jpg|gif)$/)
+        filename: 'main.js',
     },
 };
-
-// require.context("../images/", true, /\.(png|svg|jpg|gif)$/);

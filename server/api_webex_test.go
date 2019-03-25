@@ -52,6 +52,7 @@ func TestStartMeeting_Success(t *testing.T) {
 	channel := &model.Channel{
 		Id:   startMeetingRequest.ChannelId,
 		Name: startMeetingRequest.ChannelId,
+		Type: model.CHANNEL_DIRECT,
 	}
 
 	api.Mock.On("GetChannel", startMeetingRequest.ChannelId).Return(channel, nil)
@@ -64,12 +65,11 @@ func TestStartMeeting_Success(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	p.ServeHTTP(&plugin.Context{}, w, req)
-	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 
 	r := w.Result()
 	_, err := ioutil.ReadAll(r.Body)
 	assert.NoError(t, err)
 
-	// want, _ := json.Marshal(expected)
-	// assert.Equal(t, string(want), string(body))
+	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
+
 }

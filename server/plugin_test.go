@@ -53,7 +53,7 @@ var (
 	baseOAuthConnectRequest  = httptest.NewRequest("GET", "/oauth2/connect", nil)
 	baseOAuthCallbackRequest = httptest.NewRequest("GET", "/oauth2/callback", nil)
 
-	baseAPIV1MeetingRequest = httptest.NewRequest("GET", "/api/v1/meetings", makeRequestBody(startMeetingRequest))
+	baseAPIV1MeetingRequest = httptest.NewRequest("POST", "/api/v1/meetings", makeRequestBody(startMeetingRequest))
 )
 
 func makeRequestBody(v interface{}) io.ReadCloser {

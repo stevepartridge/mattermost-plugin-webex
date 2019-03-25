@@ -48,7 +48,7 @@ func TestLoadWebexSession_Success(t *testing.T) {
 	actual, err := p.loadWebexSession(sess.UserID)
 	assert.NoError(t, err)
 
-	assert.EqualValues(t, expected, actual)
+	assert.EqualValues(t, &expected, actual)
 }
 
 func TestStoreWebexSession_Success(t *testing.T) {
@@ -107,7 +107,7 @@ func TestLoadWebexUser_Success(t *testing.T) {
 	actual, err := p.loadWebexUser(user.ID)
 	assert.NoError(t, err)
 
-	assert.EqualValues(t, expected, actual)
+	assert.EqualValues(t, &expected, actual)
 }
 
 func TestStoreWebexUser_Success(t *testing.T) {
@@ -126,14 +126,14 @@ func TestStoreWebexUser_Success(t *testing.T) {
 	err := p.OnActivate()
 	assert.NoError(t, err)
 
-	err = p.storeWebexUser(user.ID, user)
+	err = p.storeWebexUser(user.ID, &user)
 	assert.NoError(t, err)
 }
 
 func TestGetWebexUserInfo_Success(t *testing.T) {
 	api := &plugintest.API{}
 
-	webexUserInfo := WebexUserInfo{}
+	webexUserInfo := validUser
 	data, _ := json.Marshal(webexUserInfo)
 	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID)).Return(data, nil)
 	api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID), mock.Anything).Return(nil)

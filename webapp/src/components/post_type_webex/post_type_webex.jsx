@@ -218,6 +218,6 @@ const getStyle = makeStyleFromTheme((theme) => {
             height: '24px',
             position: 'relative',
             top: '7px',
-        }
+        },
     };
 });

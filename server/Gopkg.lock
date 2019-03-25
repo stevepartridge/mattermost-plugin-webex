@@ -34,6 +34,14 @@
   version = "v1.4.7"
 
 [[projects]]
+  digest = "1:948d6ffd670aa33e90898f3800e869593bf9f9c7408650cf88a99e9afc682a86"
+  name = "github.com/go-chi/chi"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "da24bba8dcd4021cafac38724bf10dccc97c3e36"
+  version = "v4.0.2"
+
+[[projects]]
   digest = "1:2d0636a8c490d2272dd725db26f74a537111b99b9dbdda0d8b98febe63702aa4"
   name = "github.com/golang/protobuf"
   packages = [
@@ -44,8 +52,8 @@
     "ptypes/timestamp",
   ]
   pruneopts = "NUT"
-  revision = "c823c79ea1570fb5ff454033735a8e68575d1d0f"
-  version = "v1.3.0"
+  revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
+  version = "v1.3.1"
 
 [[projects]]
   digest = "1:a63cff6b5d8b95638bfe300385d93b2a6d9d687734b863da8e09dc834510a690"
@@ -128,13 +136,15 @@
   version = "v1.8.0"
 
 [[projects]]
-  digest = "1:e4dc3cc22ffd03f078ee329b3f435886638244f1b2f81ab9acc5bb6695ef7db4"
+  digest = "1:8f570c431d78059770f1f9d0808ba9d84eecda76235790bc452b16c7075e5979"
   name = "github.com/mattermost/mattermost-server"
   packages = [
     "einterfaces",
     "mlog",
     "model",
     "plugin",
+    "plugin/plugintest",
+    "plugin/plugintest/mock",
     "utils",
     "utils/jsonutils",
     "utils/markdown",
@@ -265,9 +275,20 @@
   version = "v1.0.3"
 
 [[projects]]
-  digest = "1:bacb8b590716ab7c33f2277240972c9582d389593ee8d66fc10074e0508b8126"
+  digest = "1:60a46e2410edbf02b419f833372dd1d24d7aa1b916a990a7370e792fada1eadd"
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
+  version = "v0.1.1"
+
+[[projects]]
+  digest = "1:81d363777b015e85bd42b978b80f4f5ecdaa43e11452ba8ff7ea93db3ce166bd"
   name = "github.com/stretchr/testify"
-  packages = ["assert"]
+  packages = [
+    "assert",
+    "mock",
+  ]
   pruneopts = "NUT"
   revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
   version = "v1.2.2"
@@ -312,11 +333,11 @@
     "blowfish",
   ]
   pruneopts = "NUT"
-  revision = "a1f597ede03a7bef967a422b5b3a5bd08805a01e"
+  revision = "a5d413f7728c81fb97d96a2b722368945f651e78"
 
 [[projects]]
   branch = "master"
-  digest = "1:fff41723be863008a9894d428954a6489df88700748ba77e7c7c6d214d0495f2"
+  digest = "1:42e98db25f8b1efa68a0840fc003862daff65502e0ab785488eefb7bb1995507"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -332,26 +353,26 @@
     "trace",
   ]
   pruneopts = "NUT"
-  revision = "9f648a60d9775ef5c977e7669d1673a7a67bef33"
+  revision = "e3b2ff56ed879efa686c9d09ed74f9bfe42f1a1d"
 
 [[projects]]
   branch = "master"
-  digest = "1:13d575ad6576f56693a410e77830da614005f87955e7cd2ac6afbf9b54afd651"
+  digest = "1:4d25d388c9ad5169b31c1a6f16cc7bcdb856489958e99f2123d8d8cdf000d7eb"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
     "internal",
   ]
   pruneopts = "NUT"
-  revision = "e64efc72b421e893cbf63f17ba2221e7d6d0b0f3"
+  revision = "c85d3e98c914e3a33234ad863dcbff5dbc425bb8"
 
 [[projects]]
   branch = "master"
-  digest = "1:c9a564b30cc3ed8b7fca2ba44cbfd74aed14480de0957727997e38266c4eccd0"
+  digest = "1:6260d0428542d10be46b886b817b570552a6c788d2076ff47024683d656ad1e2"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "NUT"
-  revision = "fead79001313d15903fb4605b4a1b781532cd93e"
+  revision = "f49334f85ddcf0f08d7fb6dd7363e9e6d6b777eb"
 
 [[projects]]
   digest = "1:e7071ed636b5422cc51c0e3a6cebc229d6c9fffc528814b519a980641422d619"
@@ -377,7 +398,7 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:34c10243da5972105edd1b4b883e2bd918fbb3f73fbe14d6af6929e547173494"
+  digest = "1:372cd8eba449f9b6db06677d0e73fa193ec5b19aaee148f355503ab6127045ca"
   name = "google.golang.org/appengine"
   packages = [
     "internal",
@@ -389,8 +410,8 @@
     "urlfetch",
   ]
   pruneopts = "NUT"
-  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
-  version = "v1.4.0"
+  revision = "54a98f90d1c46b7731eb8fb305d2a321c30ef610"
+  version = "v1.5.0"
 
 [[projects]]
   branch = "master"
@@ -398,10 +419,10 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "NUT"
-  revision = "5fe7a883aa19554f42890211544aa549836af7b7"
+  revision = "e79c0c59cdb5e117ef82a6f885294df3d74065d5"
 
 [[projects]]
-  digest = "1:8274473795baa9e1fc3b36fae1d8af131a03a7ae2456a8e87a6fda86af019f70"
+  digest = "1:0b1629e326b8754726e94f2c3acc87fbc6669a6c1e36ab059bdde62462ccd1a2"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -439,8 +460,8 @@
     "tap",
   ]
   pruneopts = "NUT"
-  revision = "2fdaae294f38ed9a121193c51ec99fecd3b13eb7"
-  version = "v1.19.0"
+  revision = "3507fb8e1a5ad030303c106fef3a47c9fdad16ad"
+  version = "v1.19.1"
 
 [[projects]]
   digest = "1:80c34337e8a734e190f2d1b716cae774cca74db98315166f92074434e9af0227"
@@ -470,12 +491,16 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/go-chi/chi",
     "github.com/jbogarin/go-cisco-webex-teams/sdk",
     "github.com/mattermost/mattermost-server/model",
     "github.com/mattermost/mattermost-server/plugin",
+    "github.com/mattermost/mattermost-server/plugin/plugintest",
+    "github.com/mattermost/mattermost-server/plugin/plugintest/mock",
     "github.com/pkg/errors",
     "github.com/stretchr/testify/assert",
     "golang.org/x/oauth2",
+    "gopkg.in/resty.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

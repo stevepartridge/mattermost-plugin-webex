@@ -21,3 +21,7 @@
 [[override]]
   name = "github.com/jbogarin/go-cisco-webex-teams"
   revision = "758c23da78f5a12135cc49ca21a5286552fd9673"
+
+[[override]]
+  name = "github.com/go-chi/chi"
+  branch = "~4.0.2"

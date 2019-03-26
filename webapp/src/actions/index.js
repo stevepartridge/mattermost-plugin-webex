@@ -27,22 +27,24 @@ export function unauthorized() {
 }
 
 export function getConnected() {
-    return (dispatch) => {
-        return Client.getConnected().then((response) => {
-            if (!response) {
-                dispatch({
-                    type: ActionTypes.AUTH_DISCONNECTED,
-                });
-                return;
-            }
-            dispatch({
-                type: ActionTypes.AUTH_CONNECTED,
-                data: response,
-            });
+    return async (dispatch) => {
 
-            return {response};
-        }).catch((error) => {
-            throw (error);
+        let data;
+        try {
+            data = await Client.getConnected();
+        } catch (error) {
+            return {error};
+        }
+
+        if (!data) {
+            dispatch({
+                type: ActionTypes.AUTH_DISCONNECTED,
+            });
+            return;
+        }
+        dispatch({
+            type: ActionTypes.AUTH_CONNECTED,
+            data: data,
         });
     };
 }

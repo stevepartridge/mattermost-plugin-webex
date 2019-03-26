@@ -13,18 +13,15 @@ export default class Client {
     getConnected = async () => {
         const req = this.request('GET', '/connected');
 
-        return fetch(req).
-            then((response) => {
-                return this.response(response);
-            }).
-            then((data) => {
-                return data;
-            }).catch((error) => {
-                throw error;
-            });
+        try {
+            let response = await fetch(req);
+            return await this.response(response);
+        } catch (e) {
+            return e.message;
+        }
     }
 
-    startMeeting = (channelId, personal = true, topic = '', meetingId = 0) => {
+    startMeeting = async (channelId, personal = true, topic = '', meetingId = 0) => {
         const payload = {
             channel_id: channelId,
             personal,
@@ -32,19 +29,19 @@ export default class Client {
             meeting_id: meetingId,
         };
 
-        const request = this.request('POST', '/api/v1/meetings', payload);
+        const req = this.request('POST', '/api/v1/meetings', payload);
 
-        return fetch(request).
-            then((response) =>
-                this.response(response)
-            ).catch((error) => {
-                return error;
-            });
+        try {
+            let response = await fetch(req);
+            return await this.response(response);
+        } catch (e) {
+            return e.message;
+        }
     }
 
-    getWebexUser = async (userID) => {
-        return this.doPost(`${this.url}/api/v1/user`, {user_id: userID});
-    }
+    // getWebexUser = async (userID) => {
+    //     return this.doPost(`${this.url}/api/v1/user`, {user_id: userID});
+    // }
 
     request = (method, path, payload) => {
         var req = {

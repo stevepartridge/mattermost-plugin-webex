@@ -144,7 +144,7 @@ endif
 .PHONY: test
 test: server/.depensure webapp/.npminstall
 ifneq ($(HAS_SERVER),)
-	cd server && $(GO) test -race -v -tags=unit_test ./...
+	cd server && $(GO) test -race -v -cover -tags=unit_test ./...
 endif
 ifneq ($(HAS_WEBAPP),)
 	cd webapp && $(NPM) run fix;

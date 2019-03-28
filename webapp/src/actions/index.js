@@ -28,7 +28,6 @@ export function unauthorized() {
 
 export function getConnected() {
     return async (dispatch) => {
-
         let data;
         try {
             data = await Client.getConnected();
@@ -44,7 +43,7 @@ export function getConnected() {
         }
         dispatch({
             type: ActionTypes.AUTH_CONNECTED,
-            data: data,
+            data,
         });
     };
 }

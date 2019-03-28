@@ -3,18 +3,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {makeStyleFromTheme, changeOpacity} from 'mattermost-redux/utils/theme_utils';
-import {Link} from 'react-router-dom';
-import {isDirectChannel} from 'mattermost-redux/utils/channel_utils';
-import {Client4} from 'mattermost-redux/client';
-import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {makeStyleFromTheme} from 'mattermost-redux/utils/theme_utils';
 
 import {id as pluginId} from '../../manifest';
 
 import mmLogoURL from './../../images/mm-logo.png';
 import webexLogoURL from './../../images/webex-logo.png';
 
-const {Tooltip, Popover, OverlayTrigger, Modal} = window.ReactBootstrap;
+const {Modal} = window.ReactBootstrap;
 
 export default class Root extends React.PureComponent {
     static propTypes = {
@@ -40,9 +36,6 @@ export default class Root extends React.PureComponent {
         var
             pos_width = (window.innerWidth - 200 + 'px');
         var style = getStyle(pos_width, this.props.theme);
-        var visible = this.props.visible;
-        var user = this.props.authenticated.user || {}
-            ;
 
         return (
             <div style={style.modelCont}>
@@ -89,7 +82,7 @@ export default class Root extends React.PureComponent {
                             className='btn btn-primary btn-block btn-lg'
                             onClick={this.startOAuthConnectFlow}
                         >
-                            Connect Webex
+                            {'Connect Webex'}
                         </button>
 
                         <button
@@ -97,7 +90,7 @@ export default class Root extends React.PureComponent {
                             className='btn btn-link btn-sm'
                             onClick={this.handleClose}
                         >
-                            Cancel
+                            {'Cancel'}
                         </button>
 
                     </Modal.Footer>

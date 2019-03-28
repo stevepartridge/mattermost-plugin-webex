@@ -14,7 +14,7 @@ export default class Client {
         const req = this.request('GET', '/connected');
 
         try {
-            let response = await fetch(req);
+            const response = await fetch(req);
             return await this.response(response);
         } catch (e) {
             return e.message;
@@ -32,7 +32,7 @@ export default class Client {
         const req = this.request('POST', '/api/v1/meetings', payload);
 
         try {
-            let response = await fetch(req);
+            const response = await fetch(req);
             return await this.response(response);
         } catch (e) {
             return e.message;

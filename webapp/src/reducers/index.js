@@ -16,15 +16,6 @@ function authenticated(state = {user: {}, session: {}}, action) {
     }
 }
 
-function meetings(state = {}, action) {
-    switch (action.type) {
-    case ActionTypes.MEETING_CREATED:
-        return state[action.data.id] = action.data;
-    default:
-        return state;
-    }
-}
-
 const rootModalVisible = (state = false, action) => {
     switch (action.type) {
     case ActionTypes.OPEN_ROOT_MODAL:

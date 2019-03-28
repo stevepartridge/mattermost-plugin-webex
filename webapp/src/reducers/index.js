@@ -16,6 +16,7 @@ function authenticated(state = {user: {}, session: {}}, action) {
     }
 }
 
+/*eslint no-fallthrough: 2*/
 const rootModalVisible = (state = false, action) => {
     switch (action.type) {
     case ActionTypes.OPEN_ROOT_MODAL:
@@ -24,7 +25,11 @@ const rootModalVisible = (state = false, action) => {
         if (action.data.message === 'Webex account not connected') {
             return true;
         }
+
+        // falls through
     case ActionTypes.AUTH_CONNECTED:
+
+        // falls through
     case ActionTypes.CLOSE_ROOT_MODAL:
         return false;
     default:

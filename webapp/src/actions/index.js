@@ -39,27 +39,24 @@ export function getConnected() {
             dispatch({
                 type: ActionTypes.AUTH_DISCONNECTED,
             });
-            return;
+            return {};
         }
         dispatch({
             type: ActionTypes.AUTH_CONNECTED,
             data,
         });
+        return {};
     };
 }
 
 export function startMeeting(channelId) {
     return async (dispatch, getState) => {
-        console.log('start meeting');
-
         let data;
         try {
             data = await Client.startMeeting(channelId, true);
         } catch (error) {
             return {error};
         }
-
-        console.log('data', data);
 
         if (data.error) {
             dispatch({

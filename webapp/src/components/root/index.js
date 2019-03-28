@@ -12,19 +12,16 @@ import {startMeeting, closeRootModal} from '../../actions';
 import Root from './root.jsx';
 
 function mapStateToProps(state, ownProps) {
-    const post = ownProps.post || {};
-
     return {
         visible: isRootModalVisible(state),
         authenticated: getAuthenticated(state),
-        site_url: getConfig(state).SiteURL,
+        siteUrl: getConfig(state).SiteURL,
         theme: getTheme(state),
         ...ownProps,
     };
 }
 
 function mapDispatchToProps(dispatch) {
-    const closePopover = closeRootModal;
     return {
         actions: bindActionCreators({
             startMeeting,

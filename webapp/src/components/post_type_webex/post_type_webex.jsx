@@ -6,9 +6,6 @@ import PropTypes from 'prop-types';
 
 import {makeStyleFromTheme} from 'mattermost-redux/utils/theme_utils';
 
-import {Svgs} from '../../constants';
-import {formatDate} from '../../utils/date_utils';
-
 export default class PostTypeWebex extends React.PureComponent {
     static propTypes = {
 

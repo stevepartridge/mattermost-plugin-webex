@@ -16,10 +16,11 @@ export default class Root extends React.PureComponent {
     static propTypes = {
 
         theme: PropTypes.object.isRequired,
+        siteUrl: PropTypes.string.isRequired,
+        visible: PropTypes.bool.isRequired,
+        authenticated: PropTypes.object.isRequired,
         actions: PropTypes.shape({
-            visible: PropTypes.bool.isRequired,
-            site_url: PropTypes.string.isRequired,
-            authenticated: PropTypes.object.isRequired,
+            closeRootModal: PropTypes.func.isRequired,
         }).isRequired,
 
     }
@@ -29,13 +30,12 @@ export default class Root extends React.PureComponent {
     };
 
     startOAuthConnectFlow = async () => {
-        window.open(`${this.props.site_url}/plugins/${pluginId}/oauth2/connect`);
+        window.open(`${this.props.siteUrl}/plugins/${pluginId}/oauth2/connect`);
     }
 
     render() {
-        var
-            pos_width = (window.innerWidth - 200 + 'px');
-        var style = getStyle(pos_width, this.props.theme);
+        var posWidth = ((window.innerWidth - 200) + 'px');
+        var style = getStyle(posWidth, this.props.theme);
 
         return (
             <div style={style.modelCont}>
@@ -103,10 +103,10 @@ export default class Root extends React.PureComponent {
 
 /* Define CSS styles here */
 var getStyle = makeStyleFromTheme((theme) => {
-    var x_pos = (window.innerWidth - 200 + 'px'); //shouldn't be set here as it doesn't rerender
+    var xPos = ((window.innerWidth - 200) + 'px'); //shouldn't be set here as it doesn't rerender
     return {
         popover: {
-            marginLeft: x_pos,
+            marginLeft: xPos,
             marginTop: '50px',
             maxWidth: '300px',
             height: '105px',
@@ -114,7 +114,7 @@ var getStyle = makeStyleFromTheme((theme) => {
             background: theme.centerChannelBg,
         },
         popoverDM: {
-            marginLeft: x_pos,
+            marginLeft: xPos,
             marginTop: '50px',
             maxWidth: '220px',
             height: '105px',

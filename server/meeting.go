@@ -32,24 +32,21 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 
 	// Ensure the current user is connected to webex
 	session, err := p.loadWebexSession(sessionUserID)
-	switch {
-	case
-		err == ErrWebexUserNotFound,
-		err == ErrWebexSessionNotFound:
+	if err != nil {
+		if err == ErrWebexUserNotFound || err == ErrWebexSessionNotFound {
+			// Set up a redirect so we can bring them back to the proper location
+			redirectURL := fmt.Sprintf("%s%s", *siteURL, r.RequestURI)
+			oauthConnectURL := fmt.Sprintf(
+				"%s/plugins/%s/oauth2/connect?redirect_to=%s",
+				*siteURL,
+				manifest.Id,
+				url.QueryEscape(redirectURL),
+			)
 
-		// Set up a redirect so we can bring them back to the proper location
-		redirectURL := fmt.Sprintf("%s%s", *siteURL, r.RequestURI)
-		oauthConnectURL := fmt.Sprintf(
-			"%s/plugins/%s/oauth2/connect?redirect_to=%s",
-			*siteURL,
-			manifest.Id,
-			url.QueryEscape(redirectURL),
-		)
-
-		p.API.LogDebug("redirect url", "url", redirectURL)
-		http.Redirect(w, r, oauthConnectURL, http.StatusTemporaryRedirect)
-		return
-	case err != nil:
+			p.API.LogDebug("redirect url", "url", redirectURL)
+			http.Redirect(w, r, oauthConnectURL, http.StatusTemporaryRedirect)
+			return
+		}
 		http.Error(w, "Not authorized", http.StatusUnauthorized)
 		return
 	}

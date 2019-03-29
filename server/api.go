@@ -50,11 +50,11 @@ func (p *Plugin) handleConnected(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := p.loadWebexUser(requestorID)
-	switch {
-	case err == ErrWebexUserNotFound:
-		JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
-		return
-	case err != nil:
+	if err != nil {
+		if err == ErrWebexUserNotFound {
+			JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
+			return
+		}
 		JSONErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}

@@ -36,6 +36,7 @@ type StartMeetingRequest struct {
 }
 
 func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("handleStartMeeting", r.Header.Get("Mattermost-User-Id"))
 	sessionUserID := r.Header.Get("Mattermost-User-Id")
 	if sessionUserID == "" {
 		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
@@ -50,29 +51,25 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := p.loadWebexSession(sessionUserID)
-	switch {
-	case
-		err == ErrWebexSessionNotFound,
-		err == ErrWebexUserNotFound:
-
+	if err != nil {
+		if err == ErrWebexSessionNotFound {
+			p.API.LogError("Error retrieving session", "err", err.Error())
+			JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
+			return
+		}
 		p.API.LogError("Error retrieving session", "err", err.Error())
-		JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
-		return
-
-	case err != nil:
 		JSONErrorResponse(w, err, http.StatusInternalServerError)
 		return
-
 	}
 
 	user, err := p.loadWebexUser(sessionUserID)
-	switch {
-	case
-		err == ErrWebexSessionNotFound,
-		err == ErrWebexUserNotFound:
-		JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
-		return
-	case err != nil:
+	if err != nil {
+		if err == ErrWebexSessionNotFound || err == ErrWebexUserNotFound {
+			p.API.LogError("Error retrieving user", "err", err.Error())
+			JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
+			return
+		}
+		p.API.LogError("Error retrieving user", "err", err.Error())
 		JSONErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -114,12 +111,12 @@ func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
 	isGuest := false
 
 	toWebexUser, err := p.loadWebexUser(toUserID)
-	switch {
-	case err == ErrWebexUserNotFound:
+	if err != nil {
+		if err != ErrWebexUserNotFound {
+			JSONErrorResponse(w, err, http.StatusInternalServerError)
+			return
+		}
 		isGuest = true
-	case err != nil:
-		JSONErrorResponse(w, err, http.StatusInternalServerError)
-		return
 	}
 
 	meeting := WebexMeeting{

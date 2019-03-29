@@ -112,38 +112,36 @@ func (p *Plugin) loadWebexSession(userID string) (*WebexOAuthSession, error) {
 // it to the KV store if successful
 func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 	webexUser, loadErr := p.loadWebexUser(userID)
+	if loadErr != nil {
+		if loadErr == ErrWebexUserNotFound {
+			session, err := p.loadWebexSession(userID)
+			if err != nil {
+				p.API.LogError("error looking up session", "error", err.Error())
+				return webexUser, err
+			}
 
-	switch {
-	case loadErr == ErrWebexUserNotFound:
+			webex, err := NewWebexClient(session.Token.AccessToken)
+			if err != nil {
+				p.API.LogError("Error creating new webex client", "error", err.Error())
+				return webexUser, err
+			}
 
-		session, err := p.loadWebexSession(userID)
-		if err != nil {
-			p.API.LogError("error looking up session", "error", err.Error())
-			return webexUser, err
+			person, _, err := webex.People.GetMe() // don't need resp so supressing it
+			if err != nil {
+				p.API.LogError("Error calling people.GetMe()", "error", err.Error())
+				return webexUser, err
+			}
+
+			webexUser = &WebexUserInfo{}
+			webexUser.FromWebexPerson(person)
+
+			err = p.storeWebexUser(userID, webexUser)
+			if err != nil {
+				p.API.LogError("Error saving webex user", "error", err.Error())
+				return webexUser, err
+			}
 		}
 
-		webex, err := NewWebexClient(session.Token.AccessToken)
-		if err != nil {
-			p.API.LogError("Error creating new webex client", "error", err.Error())
-			return webexUser, err
-		}
-
-		person, _, err := webex.People.GetMe() // don't need resp so supressing it
-		if err != nil {
-			p.API.LogError("Error calling people.GetMe()", "error", err.Error())
-			return webexUser, err
-		}
-
-		webexUser = &WebexUserInfo{}
-		webexUser.FromWebexPerson(person)
-
-		err = p.storeWebexUser(userID, webexUser)
-		if err != nil {
-			p.API.LogError("Error saving webex user", "error", err.Error())
-			return webexUser, err
-		}
-
-	case (loadErr != nil):
 		return nil, loadErr
 	}
 

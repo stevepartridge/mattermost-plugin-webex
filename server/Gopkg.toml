@@ -24,4 +24,4 @@
 
 [[override]]
   name = "github.com/go-chi/chi"
-  branch = "~4.0.2"
+  version = "~4.0.2"

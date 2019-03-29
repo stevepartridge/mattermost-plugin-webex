@@ -39,16 +39,14 @@ export default class Client {
         }
     }
 
-    // getWebexUser = async (userID) => {
-    //     return this.doPost(`${this.url}/api/v1/user`, {user_id: userID});
-    // }
-
     request = (method, path, payload) => {
         var req = {
             method,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-Timezone-Offset': new Date().getTimezoneOffset(),
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
             },
         };
 

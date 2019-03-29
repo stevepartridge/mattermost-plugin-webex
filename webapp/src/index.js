@@ -25,7 +25,7 @@ class Plugin {
         registry.registerChannelHeaderButtonAction(
             <Icon/>,
             (channel) => {
-                return startMeeting(channel.id)(store.dispatch, store.getState);
+                startMeeting(channel.id)(store.dispatch, store.getState);
             },
             'Start Webex Meeting'
         );

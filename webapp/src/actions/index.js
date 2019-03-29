@@ -45,7 +45,7 @@ export function getConnected() {
             type: ActionTypes.AUTH_CONNECTED,
             data,
         });
-        return {};
+        return data;
     };
 }
 

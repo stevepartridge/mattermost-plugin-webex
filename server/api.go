@@ -40,33 +40,3 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 	p.mux.ServeHTTP(w, r)
 }
-
-// handleConnected checks if the user has connected their webex account
-func (p *Plugin) handleConnected(w http.ResponseWriter, r *http.Request) {
-	requestorID := r.Header.Get("Mattermost-User-ID")
-	if requestorID == "" {
-		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
-		return
-	}
-
-	user, err := p.loadWebexUser(requestorID)
-	if err != nil {
-		if err == ErrWebexUserNotFound {
-			JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
-			return
-		}
-		JSONErrorResponse(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	session, err := p.loadWebexSession(requestorID)
-	if err != nil {
-		JSONErrorResponse(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	JSONResponse(w, map[string]interface{}{
-		"user":    user,
-		"session": session,
-	}, http.StatusOK)
-}

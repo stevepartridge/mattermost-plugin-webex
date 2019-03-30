@@ -12,6 +12,36 @@ import (
 // https://developer.webex.com/docs/api/getting-started
 // https://github.com/webex/react-ciscospark
 
+// handleConnected checks if the user has connected their webex account
+func (p *Plugin) handleConnected(w http.ResponseWriter, r *http.Request) {
+	requestorID := r.Header.Get("Mattermost-User-ID")
+	if requestorID == "" {
+		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := p.loadWebexUser(requestorID)
+	if err != nil {
+		if err == ErrWebexUserNotFound {
+			JSONErrorResponse(w, ErrWebexNotConnected, http.StatusUnauthorized)
+			return
+		}
+		JSONErrorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	session, err := p.loadWebexSession(requestorID)
+	if err != nil {
+		JSONErrorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	JSONResponse(w, map[string]interface{}{
+		"user":    user,
+		"session": session,
+	}, http.StatusOK)
+}
+
 func (p *Plugin) handleGetWebexUser(w http.ResponseWriter, r *http.Request) {
 	sessionUserID := r.Header.Get("Mattermost-User-ID")
 	if sessionUserID == "" {
@@ -32,11 +62,10 @@ type StartMeetingRequest struct {
 	ChannelId string `json:"channel_id"`
 	Personal  bool   `json:"personal"`
 	Topic     string `json:"topic"`
-	MeetingId int    `json:"meeting_id"`
 }
 
 func (p *Plugin) handleStartMeeting(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handleStartMeeting", r.Header.Get("Mattermost-User-Id"))
+
 	sessionUserID := r.Header.Get("Mattermost-User-Id")
 	if sessionUserID == "" {
 		JSONErrorResponse(w, ErrNotAuthorized, http.StatusUnauthorized)

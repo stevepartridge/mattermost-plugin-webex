@@ -48,7 +48,7 @@ export default class Client {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            credentials: "same-origin",
+            credentials: 'same-origin',
         };
 
         if (payload) {

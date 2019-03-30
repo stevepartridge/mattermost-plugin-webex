@@ -5,8 +5,35 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 
 	"github.com/go-chi/chi"
+)
+
+const meetingHTMLTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf8">
+
+  <title>Webex Meeting with {{.WithName}}</title>
+  <link rel="stylesheet" href="{{.SiteURL}}/static/plugins/webex/external/spark.css">
+</head>
+<body>
+
+  <div style="width: 100%; height: 100%;"
+    id="space"
+    data-toggle="ciscospark-space"
+    data-initial-activity="meet"
+    data-access-token="{{.AccessToken}}"
+    {{.DestinationAttributes}}
+    />
+
+  <script src="{{.SiteURL}}/static/plugins/webex/external/spark.js"></script>
+</body>
+</html>`
+
+var (
+	meetingHTML = template.Must(template.New("meeting").Parse(meetingHTMLTemplate))
 )
 
 // WebexMeeting
@@ -114,35 +141,22 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
     data-destination-id="` + withWebexUser.ID + `"
     data-destination-type="userId"
     `
-
 	}
 
-	//
-	// TODO: move this to a template and use an embedded copy of js/css resources
-	//       OR move to a component using the cisco spark react components
-	//
-	html := `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf8">
-
-  <title>Webex Meeting with ` + meetingWithName + `</title>
-  <link rel="stylesheet" href="` + *siteURL + `/static/plugins/webex/external/spark.css">
-</head>
-<body>
-
-  <div style="width: 100%; height: 100%;"
-    id="space"
-    data-toggle="ciscospark-space"
-    data-initial-activity="meet"
-    data-access-token="` + session.Token.AccessToken + `"
-    ` + destinationDataAttributes + `
-    />
-
-  <script src="` + *siteURL + `/static/plugins/webex/external/spark.js"></script>
-</body>
-</html>`
-
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(html))
+	err = meetingHTML.Execute(w, struct {
+		WithName              string
+		SiteURL               string
+		AccessToken           string
+		DestinationAttributes string
+	}{
+		WithName:              meetingWithName,
+		SiteURL:               *siteURL,
+		AccessToken:           session.Token.AccessToken,
+		DestinationAttributes: destinationDataAttributes,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

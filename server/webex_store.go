@@ -126,7 +126,7 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 				return webexUser, err
 			}
 
-			person, _, err := webex.People.GetMe() // don't need resp so supressing it
+			person, _, err := webex.People.GetMe() // don't need resp, supressing it
 			if err != nil {
 				p.API.LogError("Error calling people.GetMe()", "error", err.Error())
 				return webexUser, err
@@ -140,6 +140,8 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 				p.API.LogError("Error saving webex user", "error", err.Error())
 				return webexUser, err
 			}
+
+			return webexUser, nil
 		}
 
 		return nil, loadErr

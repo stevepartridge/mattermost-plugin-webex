@@ -6,6 +6,12 @@ import (
 )
 
 var (
+	ErrConfigInvalidMissingOAuthClientID     = errors.New("OAuth Client ID is not configured.")
+	ErrConfigInvalidMissingOAuthClientSecret = errors.New("OAuth Client Secret is not configured.")
+	ErrConfigInvalidMissingAuthorizeURL      = errors.New("Webex Authorize URL is not configured.")
+	ErrConfigInvalidMissingAccessTokenURL    = errors.New("Webex Access Token URL is not configured.")
+	ErrConfigInvalidMissingEncryptionKey     = errors.New("Encryption key is not configured.")
+
 	ErrNotAuthorized            = errors.New("Not authorized")
 	ErrMethodNotAllowed         = errors.New("Method not allowed")
 	ErrAuthroizationCodeMissing = errors.New("Authorization code is missing")

@@ -117,19 +117,19 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 			session, err := p.loadWebexSession(userID)
 			if err != nil {
 				p.API.LogError("error looking up session", "error", err.Error())
-				return webexUser, err
+				return nil, err
 			}
 
 			webex, err := NewWebexClient(session.Token.AccessToken)
 			if err != nil {
 				p.API.LogError("Error creating new webex client", "error", err.Error())
-				return webexUser, err
+				return nil, err
 			}
 
 			person, _, err := webex.People.GetMe() // don't need resp, supressing it
 			if err != nil {
 				p.API.LogError("Error calling people.GetMe()", "error", err.Error())
-				return webexUser, err
+				return nil, err
 			}
 
 			webexUser = &WebexUserInfo{}
@@ -138,7 +138,7 @@ func (p *Plugin) getWebexUserInfo(userID string) (*WebexUserInfo, error) {
 			err = p.storeWebexUser(userID, webexUser)
 			if err != nil {
 				p.API.LogError("Error saving webex user", "error", err.Error())
-				return webexUser, err
+				return nil, err
 			}
 
 			return webexUser, nil

@@ -14,35 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// import (
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"testing"
-// )
-
-// func TestOAuth2(t *testing.T) {
-
-// 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		w.Header().Set("Content-Type", "application/json")
-// 		w.Write([]byte(`{
-//   "access_token":"ZDI3MGEyYzQtNmFlNS00NDNhLWFlNzAtZGVjNjE0MGU1OGZmZWNmZDEwN2ItYTU3",
-//   "expires_in":1209600,
-//   "refresh_token":"MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTEyMzQ1Njc4",
-//   "refresh_token_expires_in":7776000
-// }`))
-// 	}))
-// 	defer ts.Close()
-
-// }
-
-// {
-//  "access_token":"ZDI3MGEyYzQtNmFlNS00NDNhLWFlNzAtZGVjNjE0MGU1OGZmZWNmZDEwN2ItYTU3",
-//  "expires_in":1209600, //seconds
-//  "refresh_token":"MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTEyMzQ1Njc4",
-//  "refresh_token_expires_in":7776000 //seconds
-// }
-
-func TestGetOAuthConfig_Success(t *testing.T) {
+func TestGetOAuthConfig(t *testing.T) {
 	api := &plugintest.API{}
 	p := Plugin{}
 
@@ -66,44 +38,68 @@ func TestGetOAuthConfig_Success(t *testing.T) {
 	assert.Equal(t, conf.ClientID, basicConfig.OAuthClientID)
 }
 
-func Test_HandleOAuthConnect_Success(t *testing.T) {
-	pluginConfig := basicConfig
+func TestHandleOAuthConnect(t *testing.T) {
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("req", r.RequestURI)
-	}))
-	defer ts.Close()
+	t.Run("Fail With Unauthorized", func(t *testing.T) {
+		req := baseOAuthConnectRequest
 
-	pluginConfig.WebexAuthorizeURL = fmt.Sprintf("%s/v1/authorize", ts.URL)
-	pluginConfig.WebexAccessTokenURL = fmt.Sprintf("%s/v1/access_token", ts.URL)
+		api := &plugintest.API{}
+		p := Plugin{}
 
-	req := baseOAuthConnectRequest
-	req.Header.Set("Mattermost-User-ID", validUserId)
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
 
-	api := &plugintest.API{}
-	p := Plugin{}
+		w := httptest.NewRecorder()
 
-	siteURL := "http://example.com"
-	cfg := &model.Config{
-		ServiceSettings: model.ServiceSettings{
-			SiteURL: &siteURL,
-		},
-	}
+		p.ServeHTTP(&plugin.Context{}, w, req)
 
-	api.Mock.On("GetConfig").Return(cfg)
-	api.Mock.On("KVSetWithExpiry", mock.Anything, mock.Anything, int64(300)).Return(nil)
+		assert.Equal(t, http.StatusUnauthorized, w.Result().StatusCode)
+	})
 
-	p.setConfiguration(pluginConfig)
-	p.SetAPI(api)
+	t.Run("Success", func(t *testing.T) {
 
-	w := httptest.NewRecorder()
+		pluginConfig := basicConfig
 
-	p.ServeHTTP(&plugin.Context{}, w, req)
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println("req", r.RequestURI)
+		}))
+		defer ts.Close()
 
-	assert.Equal(t, 302, w.Result().StatusCode)
+		pluginConfig.WebexAuthorizeURL = fmt.Sprintf("%s/v1/authorize", ts.URL)
+		pluginConfig.WebexAccessTokenURL = fmt.Sprintf("%s/v1/access_token", ts.URL)
+
+		req := baseOAuthConnectRequest
+		req.Header.Set("Mattermost-User-ID", validUserId)
+
+		api := &plugintest.API{}
+		p := Plugin{}
+
+		siteURL := "http://example.com"
+		cfg := &model.Config{
+			ServiceSettings: model.ServiceSettings{
+				SiteURL: &siteURL,
+			},
+		}
+
+		api.Mock.On("GetConfig").Return(cfg)
+		api.Mock.On("KVSetWithExpiry", mock.Anything, mock.Anything, int64(300)).Return(nil)
+
+		p.setConfiguration(pluginConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+
+		p.ServeHTTP(&plugin.Context{}, w, req)
+
+		assert.Equal(t, 302, w.Result().StatusCode)
+	})
 }
 
-func Test_HandleOAuthCallback_Success(t *testing.T) {
+func TestHandleOAuthCallback(t *testing.T) {
 	pluginConfig := basicConfig
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -173,10 +169,11 @@ func Test_HandleOAuthCallback_Success(t *testing.T) {
 
 	api.Mock.On("LogInfo", mock.Anything, mock.Anything, mock.Anything).Return()
 	api.Mock.On("LogDebug", mock.Anything, mock.Anything, mock.Anything).Return()
-	// api.Mock.On("KVSetWithExpiry", mock.Anything, mock.Anything, int64(300)).Return(nil)
 
 	p.setConfiguration(pluginConfig)
 	p.SetAPI(api)
+	err := p.OnActivate()
+	assert.NoError(t, err)
 
 	w := httptest.NewRecorder()
 

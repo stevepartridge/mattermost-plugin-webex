@@ -12,7 +12,7 @@ import (
 	"github.com/mattermost/mattermost-server/plugin/plugintest/mock"
 )
 
-func TestLoadWebexSession_Success(t *testing.T) {
+func TestLoadWebexSession(t *testing.T) {
 	api := &plugintest.API{}
 
 	sess := WebexOAuthSession{
@@ -25,24 +25,13 @@ func TestLoadWebexSession_Success(t *testing.T) {
 
 	expected := sess
 
-	var err error
-
-	sess.Token.AccessToken, err = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.AccessToken)
-	assert.NoError(t, err)
-	sess.Token.RefreshToken, err = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.RefreshToken)
-	assert.NoError(t, err)
-
-	sessData, _ := json.Marshal(sess)
-
+	sessData := makeSessionData(sess)
 	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexOAuthSessionKey, sess.UserID)).Return(sessData, nil)
 
 	p := Plugin{}
-
 	p.setConfiguration(basicConfig)
-
 	p.SetAPI(api)
-
-	err = p.OnActivate()
+	err := p.OnActivate()
 	assert.NoError(t, err)
 
 	actual, err := p.loadWebexSession(sess.UserID)
@@ -51,111 +40,249 @@ func TestLoadWebexSession_Success(t *testing.T) {
 	assert.EqualValues(t, &expected, actual)
 }
 
-func TestStoreWebexSession_Success(t *testing.T) {
-	api := &plugintest.API{}
+func TestStoreWebexSession(t *testing.T) {
 
-	sess := WebexOAuthSession{
-		UserID: validUserId,
-		Token:  validToken,
-	}
+	t.Run("Success setting Session", func(t *testing.T) {
 
-	expiry := time.Now().Add(time.Minute * 5).UTC()
-	sess.Token.Expiry = expiry
+		api := &plugintest.API{}
 
-	var err error
+		sess := WebexOAuthSession{
+			UserID: validUserId,
+			Token:  validToken,
+		}
 
-	sess.Token.AccessToken, err = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.AccessToken)
-	assert.NoError(t, err)
-	sess.Token.RefreshToken, err = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.RefreshToken)
-	assert.NoError(t, err)
+		api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexOAuthSessionKey, sess.UserID), mock.Anything).Return(nil)
 
-	api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexOAuthSessionKey, sess.UserID), mock.Anything).Return(nil)
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
 
-	p := Plugin{}
+		err = p.storeWebexSession(sess)
+		assert.NoError(t, err)
+	})
 
-	p.setConfiguration(basicConfig)
+	t.Run("Fail Missing user ID", func(t *testing.T) {
 
-	p.SetAPI(api)
+		api := &plugintest.API{}
 
-	err = p.OnActivate()
-	assert.NoError(t, err)
+		sess := WebexOAuthSession{
+			Token: validToken,
+		}
 
-	err = p.storeWebexSession(sess)
-	assert.NoError(t, err)
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		err = p.storeWebexSession(sess)
+		assert.EqualError(t, err, ErrUnableToSaveSessionMissingUserID.Error())
+	})
+
+	t.Run("Fail Missing Access Token", func(t *testing.T) {
+
+		api := &plugintest.API{}
+
+		sess := WebexOAuthSession{
+			UserID: validUserId,
+		}
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		err = p.storeWebexSession(sess)
+		assert.EqualError(t, err, ErrUnableToSaveSessionMissingAccessToken.Error())
+
+	})
 }
 
-func TestLoadWebexUser_Success(t *testing.T) {
+func TestLoadWebexUser(t *testing.T) {
 	api := &plugintest.API{}
 
-	user := validUser
+	user := validWebexUser
 
-	expected := validUser
+	expected := validWebexUser
 
 	userData, _ := json.Marshal(user)
 
-	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, user.ID)).Return(userData, nil)
+	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUserId)).Return(userData, nil)
 
 	p := Plugin{}
-
 	p.setConfiguration(basicConfig)
-
 	p.SetAPI(api)
-
 	err := p.OnActivate()
 	assert.NoError(t, err)
 
-	actual, err := p.loadWebexUser(user.ID)
+	actual, err := p.loadWebexUser(validUserId)
 	assert.NoError(t, err)
 
 	assert.EqualValues(t, &expected, actual)
 }
 
-func TestStoreWebexUser_Success(t *testing.T) {
+func TestStoreWebexUser(t *testing.T) {
 	api := &plugintest.API{}
 
-	user := validUser
+	t.Run("Fail With Missing User ID", func(t *testing.T) {
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
 
-	api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, user.ID), mock.Anything).Return(nil)
+		err = p.storeWebexUser("", nil)
+		assert.EqualError(t, err, ErrUnableToSaveWebexUserMissingUserID.Error())
+	})
 
-	p := Plugin{}
+	t.Run("Fail With Nil User", func(t *testing.T) {
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
 
-	p.setConfiguration(basicConfig)
+		err = p.storeWebexUser(validUserId, nil)
+		assert.EqualError(t, err, ErrUnableToSaveWebexUserMissingUser.Error())
+	})
 
-	p.SetAPI(api)
+	t.Run("Success", func(t *testing.T) {
 
-	err := p.OnActivate()
-	assert.NoError(t, err)
+		user := validWebexUser
 
-	err = p.storeWebexUser(user.ID, &user)
-	assert.NoError(t, err)
+		api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUserId), mock.Anything).Return(nil)
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		err = p.storeWebexUser(validUserId, &user)
+		assert.NoError(t, err)
+	})
 }
 
-func TestGetWebexUserInfo_Success(t *testing.T) {
-	api := &plugintest.API{}
+func TestGetWebexUserInfo(t *testing.T) {
 
-	webexUserInfo := validUser
-	data, _ := json.Marshal(webexUserInfo)
-	api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID)).Return(data, nil)
-	api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUser.ID), mock.Anything).Return(nil)
+	t.Run("Fail with Webex User Not Found", func(t *testing.T) {
+		api := &plugintest.API{}
 
-	p := Plugin{}
+		sess := WebexOAuthSession{
+			UserID: validUserId,
+			Token:  validToken,
+		}
 
-	p.setConfiguration(basicConfig)
+		sessData := makeSessionData(sess)
+		api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexOAuthSessionKey, sess.UserID)).Return(sessData, nil)
 
-	p.SetAPI(api)
+		// webexUserInfo := validUser
+		// data, _ := json.Marshal(webexUserInfo)
 
-	err := p.OnActivate()
-	assert.NoError(t, err)
+		api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUserId)).Return([]byte{}, nil)
+		api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUserId), mock.Anything).Return(nil)
 
-	user, err := p.getWebexUserInfo(validUser.ID)
-	assert.NoError(t, err)
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
 
-	assert.EqualValues(t, validUserId, user.ID)
+		user, err := p.getWebexUserInfo(validUser.Id)
+		assert.NoError(t, err)
+
+		assert.NotNil(t, user)
+	})
+
+	t.Run("Succeed with valid user found", func(t *testing.T) {
+		api := &plugintest.API{}
+
+		webexUserInfo := validWebexUser
+		data, _ := json.Marshal(webexUserInfo)
+		api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexUserKey, validUserId)).Return(data, nil)
+		api.Mock.On("KVSet", fmt.Sprintf("%s%s", WebexUserKey, validUserId), mock.Anything).Return(nil)
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		user, err := p.getWebexUserInfo(validUserId)
+		assert.NoError(t, err)
+
+		assert.EqualValues(t, webexUserInfo.ID, user.ID)
+	})
+
+}
+
+func TestLoadMeeting(t *testing.T) {
+
+	t.Run("Fail With Meeting Not Found", func(t *testing.T) {
+
+		api := &plugintest.API{}
+
+		api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexMeetingKey, validMeeting.ID)).Return([]byte{}, nil)
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		meeting, err := p.loadWebexMeeting(validMeeting.ID)
+		assert.Nil(t, meeting)
+		assert.EqualError(t, err, ErrWebexMeetingNotFound.Error())
+	})
+
+	t.Run("Success", func(t *testing.T) {
+
+		api := &plugintest.API{}
+
+		meetingInfo := validMeeting
+		data, _ := json.Marshal(meetingInfo)
+		api.Mock.On("KVGet", fmt.Sprintf("%s%s", WebexMeetingKey, validMeeting.ID)).Return(data, nil)
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		meeting, err := p.loadWebexMeeting(validMeeting.ID)
+		assert.NoError(t, err)
+
+		assert.EqualValues(t, validMeeting.ID, meeting.ID)
+
+	})
+}
+
+func TestStoreMeeting(t *testing.T) {
+
+	t.Run("Fail With Meeting ID Missing", func(t *testing.T) {
+
+		api := &plugintest.API{}
+
+		p := Plugin{}
+		p.setConfiguration(basicConfig)
+		p.SetAPI(api)
+		err := p.OnActivate()
+		assert.NoError(t, err)
+
+		err = p.storeWebexMeeting(WebexMeeting{})
+		assert.EqualError(t, err, ErrUnableToSaveWebexMeetingMissingID.Error())
+	})
+
 }
 
 func makeSessionData(sess WebexOAuthSession) []byte {
-	expiry := time.Now().Add(time.Minute * 5).UTC()
-	sess.Token.Expiry = expiry
+	if sess.Token.Expiry.IsZero() {
+		expiry := time.Now().Add(time.Minute * 5).UTC()
+		sess.Token.Expiry = expiry
+	}
 
 	sess.Token.AccessToken, _ = encrypt([]byte(basicConfig.EncryptionKey), sess.Token.AccessToken)
 

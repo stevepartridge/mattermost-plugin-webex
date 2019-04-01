@@ -79,7 +79,7 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	meetingID := chi.URLParam(r, "meeting_id")
-	p.API.LogDebug("Load meeting", "meeting_id", meetingID)
+	p.API.LogInfo("Load meeting", "meeting_id", meetingID)
 
 	meeting, err := p.loadWebexMeeting(meetingID)
 	if err != nil {
@@ -129,8 +129,6 @@ func (p *Plugin) handleMeeting(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		p.API.LogDebug("Found meeting", "meeting_id", meeting.ID, "channel_id", meeting.ChannelID)
 
 		meetingWithName = withUser.GetFullName()
 		if strings.TrimSpace(meetingWithName) == "" {

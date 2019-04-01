@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 
@@ -42,23 +41,15 @@ func (c *configuration) Clone() *configuration {
 // IsValid checks if all needed fields are set.
 func (c *configuration) IsValid() error {
 	if strings.TrimSpace(c.OAuthClientID) == "" {
-		return fmt.Errorf("OAuth Client ID is not configured.")
+		return ErrConfigInvalidMissingOAuthClientID
 	}
 
 	if strings.TrimSpace(c.OAuthClientSecret) == "" {
-		return fmt.Errorf("OAuth Client ID is not configured.")
-	}
-
-	if strings.TrimSpace(c.WebexAuthorizeURL) == "" {
-		return fmt.Errorf("Webex Authorize URL is not configured.")
-	}
-
-	if strings.TrimSpace(c.WebexAccessTokenURL) == "" {
-		return fmt.Errorf("Webex Access Token URL is not configured.")
+		return ErrConfigInvalidMissingOAuthClientSecret
 	}
 
 	if strings.TrimSpace(c.EncryptionKey) == "" {
-		return fmt.Errorf("Encryption key is not configured.")
+		return ErrConfigInvalidMissingEncryptionKey
 	}
 
 	return nil
@@ -73,6 +64,15 @@ func (p *Plugin) getConfiguration() *configuration {
 
 	if p.configuration == nil {
 		return &configuration{}
+	}
+
+	// Set the defaults if not present
+	if p.configuration.WebexAuthorizeURL == "" {
+		p.configuration.WebexAuthorizeURL = DefaultAuthorizeURL
+	}
+
+	if p.configuration.WebexAccessTokenURL == "" {
+		p.configuration.WebexAccessTokenURL = DefaultAccessTokenURL
 	}
 
 	return p.configuration

@@ -3,22 +3,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 
 	webexteams "github.com/jbogarin/go-cisco-webex-teams/sdk"
-	"gopkg.in/resty.v1"
 )
 
-// NewWebexClient is a helper to create a new webex sdk client
-// references:
-//   https://github.com/jbogarin/go-cisco-webex-teams
-//   https://github.com/jbogarin/go-cisco-webex-teams/blob/master/examples/people/main.go#L15-L18
 func NewWebexClient(token string) (*webexteams.Client, error) {
-	client := resty.New()
 
-	client.SetAuthToken(token)
+	if token == "" {
+		return nil, ErrWebexClientMissingToken
+	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("req", r.RequestURI)
@@ -30,13 +27,32 @@ func NewWebexClient(token string) (*webexteams.Client, error) {
   "refresh_token":"` + validToken.RefreshToken + `",
   "refresh_token_expires_in":7776000
 }`))
+		}
 
+		if r.RequestURI == "/people/me" {
+			w.Header().Set("Content-Type", "application/json")
+
+			webexPerson := webexteams.Person{}
+
+			if r.Header.Get("Authorization") != "" {
+				if r.Header.Get("Authorization") == fmt.Sprintf("Bearer %s", validToken.AccessToken) {
+					webexPerson = webexteams.Person{
+						ID:     validWebexUser.ID,
+						Emails: validWebexUser.Emails,
+					}
+				}
+			}
+
+			data, _ := json.Marshal(webexPerson)
+			w.Write(data)
 		}
 
 	}))
-	defer ts.Close()
 
-	client.SetHostURL(ts.URL)
+	c := webexteams.NewClient(nil)
 
-	return webexteams.NewClient(client), nil
+	webexteams.RestyClient.SetHostURL(ts.URL)
+	webexteams.RestyClient.SetAuthToken(token)
+
+	return c, nil
 }

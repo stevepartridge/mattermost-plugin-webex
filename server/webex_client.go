@@ -4,7 +4,6 @@ package main
 
 import (
 	webexteams "github.com/jbogarin/go-cisco-webex-teams/sdk"
-	"gopkg.in/resty.v1"
 )
 
 // NewWebexClient is a helper to create a new webex sdk client
@@ -16,9 +15,8 @@ func NewWebexClient(token string) (*webexteams.Client, error) {
 		return nil, ErrWebexClientMissingToken
 	}
 
-	client := resty.New()
+	c := webexteams.NewClient(nil)
+	webexteams.RestyClient.SetAuthToken(token)
 
-	client.SetAuthToken(token)
-
-	return webexteams.NewClient(client), nil
+	return c, nil
 }

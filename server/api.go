@@ -34,9 +34,5 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if p.mux == nil {
-		p.prepareRoutes()
-	}
-
 	p.mux.ServeHTTP(w, r)
 }

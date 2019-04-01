@@ -48,9 +48,6 @@ export default class Root extends React.PureComponent {
                     <Modal.Header
                         closeButton={true}
                         style={style.header}
-                   <Modal.Header
-                        closeButton={true}
-                        style={style.header}
                     />
 
                     <Modal.Body style={style.body}>

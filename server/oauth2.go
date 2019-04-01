@@ -70,10 +70,6 @@ func (p *Plugin) handleOAuthConnect(w http.ResponseWriter, r *http.Request) {
 // handleOAuthCallback takes care of the callback if all went well with the
 // identity provider (webex cloud) and they've sent the user back to us
 func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
-	if strings.ToUpper(r.Method) != "GET" {
-		http.Error(w, ErrMethodNotAllowed.Error(), http.StatusMethodNotAllowed)
-		return
-	}
 
 	var (
 		code   string

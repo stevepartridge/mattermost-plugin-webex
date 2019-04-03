@@ -44,7 +44,7 @@ Use `make check-style` to check the style for the whole plugin.
 Use `make deploy` with Environment variables `MM_SERVICESETTINGS_SITEURL`, `MM_ADMIN_USERNAME` and `MM_ADMIN_PASSWORD` to deploy directly to a running server. 
 
 ```
-MM_SERVICESETTINGS_SITEURL=http://localhost:8065 \ 
+MM_SERVICESETTINGS_SITEURL=http://localhost:8065 \
 MM_ADMIN_USERNAME=marty \
 MM_ADMIN_PASSWORD=password \
 make deploy

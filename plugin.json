@@ -1,0 +1,56 @@
+{
+    "id": "webex",
+    "name": "Webex",
+    "description": "Webex audio and video conferencing plugin for Mattermost 5.2+.",
+    "version": "0.0.1",
+    "server": {
+        "executables": {
+            "linux-amd64": "server/dist/plugin-linux-amd64",
+            "darwin-amd64": "server/dist/plugin-darwin-amd64",
+            "windows-amd64": "server/dist/plugin-windows-amd64.exe"
+        }
+    },
+    "webapp": {
+        "bundle_path": "webapp/dist/main.js"
+    },
+    "settings_schema": {
+        "header": "Cisco Webex Plugin",
+        "footer": "The footer [](https://api.ciscospark.com/v1/access_token)",
+        "settings": [
+            {
+                "key": "OAuthClientId",
+                "display_name": "OAuth Client ID",
+                "type": "text",
+                "help_text": "This is the Webex Mattermost integration OAuth Client ID.  This can be found after creating the Mattermost integration at https://developer.webex.com",
+                "placeholder": "Client ID"
+            },
+            {
+                "key": "OAuthClientSecret",
+                "display_name": "OAuth Client Secret",
+                "type": "text",
+                "help_text": "This is the Webex Mattermost integration OAuth Client Secret.  This can be found after creating the Mattermost integration at https://developer.webex.com",
+                "placeholder": "Client Secret"
+            },
+            {
+                "key": "WebexAuthorizeURL",
+                "display_name": "OAuth Authorize URL",
+                "type": "text",
+                "help_text": "This is the Webex Mattermost integration OAuth Authorize URL.  If using the cloud based the default is https://api.ciscospark.com/v1/authorize",
+                "placeholder": "https://api.ciscospark.com/v1/authorize"
+            },
+            {
+                "key": "WebexAccessTokenURL",
+                "display_name": "OAuth Access Token URL",
+                "type": "text",
+                "help_text": "This is the Webex Mattermost integration OAuth Authorize URL.  If using the cloud based the default is https://api.ciscospark.com/v1/access_token",
+                "placeholder": "https://api.ciscospark.com/v1/access_token"
+            },
+            {
+                "key": "EncryptionKey",
+                "display_name": "At Rest Encryption Key",
+                "type": "generated",
+                "help_text": "The AES encryption key used to encrypt stored access tokens."
+            }
+        ]
+    }
+}

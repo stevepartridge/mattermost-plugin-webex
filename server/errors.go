@@ -1,0 +1,47 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	ErrConfigInvalidMissingOAuthClientID     = errors.New("OAuth Client ID is not configured.")
+	ErrConfigInvalidMissingOAuthClientSecret = errors.New("OAuth Client Secret is not configured.")
+	ErrConfigInvalidMissingAuthorizeURL      = errors.New("Webex Authorize URL is not configured.")
+	ErrConfigInvalidMissingAccessTokenURL    = errors.New("Webex Access Token URL is not configured.")
+	ErrConfigInvalidMissingEncryptionKey     = errors.New("Encryption key is not configured.")
+
+	ErrNotAuthorized            = errors.New("Not authorized")
+	ErrMethodNotAllowed         = errors.New("Method not allowed")
+	ErrAuthroizationCodeMissing = errors.New("Authorization code is missing")
+	ErrOAuthInvalidState        = errors.New("Invalid state")
+	ErrOAuthRetrievingState     = errors.New("Error retrieving stored state")
+
+	ErrWebexSessionNotFound = errors.New("Webex session not found")
+	ErrWebexSessionExpired  = errors.New("Webex session has expired")
+
+	ErrUnableToSaveSessionMissingUserID      = errors.New("Unable to save session, missing user ID")
+	ErrUnableToSaveSessionMissingAccessToken = errors.New("Unable to save session, missing access token")
+
+	ErrWebexUserNotFound                  = errors.New("Webex user not found")
+	ErrUnableToSaveWebexUserMissingUserID = errors.New("Unable to save webex user, missing user ID")
+	ErrUnableToSaveWebexUserMissingUser   = errors.New("Unable to save webex user, user is nil")
+
+	ErrWebexNotConnected = errors.New("Webex account not connected")
+
+	ErrUnableToSaveWebexMeetingMissingID = errors.New("Unable to save session, missing meeting ID")
+
+	ErrCreateMeetingFailedOwnChannel = errors.New("Unable to create new meeting with self")
+	ErrCreateMeetingToUserIdNotFound = errors.New("Unable to create new meeting User Not Found")
+	ErrCreateMeetingTypeNotSupported = errors.New("Unable to create new meeting Type %s not supported")
+
+	ErrWebexMeetingNotFound = errors.New("Webex meeting not found")
+
+	ErrWebexClientMissingToken = errors.New("Unable to create new WebexClient, missing token")
+)
+
+// ErrReplacer allows for static errors to have dynamic values
+func ErrReplacer(err error, replacers ...interface{}) error {
+	return fmt.Errorf(err.Error(), replacers...)
+}

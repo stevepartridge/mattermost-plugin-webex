@@ -170,13 +170,16 @@ func (p *Plugin) handleOAuthCallback(w http.ResponseWriter, r *http.Request) {
 	p.API.LogDebug("token", "token", tkn.AccessToken)
 
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(`<html>
+	w.Write([]byte(`<!DOCTYPE html>
+<html>
   <title>Webex Connection Success</title>
+  <head>
+		<script>
+			window.close();
+		</script>
+	</head>
   <body>
-  Connected
-  <script>
-    window.close();
-  </script>
+  Connected.  Please close this window.
   </body>
 </html>
 `))

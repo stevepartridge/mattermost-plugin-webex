@@ -205,7 +205,7 @@ func (p *Plugin) storeWebexUser(userID string, user *WebexUserInfo) error {
 	return nil
 }
 
-// loadWebexUser loads the webex meeting info from the KV store if present
+// loadWebexMeeting loads the webex meeting info from the KV store if present
 func (p *Plugin) loadWebexMeeting(meetingID string) (*WebexMeeting, error) {
 	key := fmt.Sprintf("%s%s", WebexMeetingKey, meetingID)
 
@@ -234,7 +234,7 @@ func (p *Plugin) loadWebexMeeting(meetingID string) (*WebexMeeting, error) {
 	return &webexMeeting, nil
 }
 
-// storeWebexUser saves the meeting info to the KV store
+// storeWebexMeeting saves the meeting info to the KV store
 func (p *Plugin) storeWebexMeeting(meeting WebexMeeting) error {
 	if meeting.ID == "" {
 		return ErrUnableToSaveWebexMeetingMissingID
